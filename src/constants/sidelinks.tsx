@@ -21,8 +21,8 @@ export interface SideLink extends NavLink {
 }
 
 const mainLinks: SideLink[] = [
-  { title: "Home", label: "", href: "/", icon: <HomeIcon size={18} /> },
-  { title: "My Tasks", label: "", href: "/tasks", icon: <UserCog size={18} /> },
+  { title: "Home", label: "", href: "/workspace", icon: <HomeIcon size={18} /> },
+  { title: "My Tasks", label: "", href: "/task", icon: <UserCog size={18} /> },
   {
     title: "Settings",
     label: "",

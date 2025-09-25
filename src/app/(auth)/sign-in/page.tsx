@@ -68,7 +68,7 @@ const SignInForm = () => {
       } else if (result?.ok) {
         console.log("Not Error");
         toast.success({ message: "Logged in successfully!" });
-        router.push("/");
+        router.push("/workspace");
       }
     } catch (error) {
       toast.error({

@@ -9,8 +9,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { SideLink, getNavigationLinks } from "@/constants/sidelinks";
-// import { useProjectById } from "@/hooks/management/manage-project";
-
+import { useGetAllWorkspace } from "@/hooks/workspace";
+import { useRouter } from "next/navigation";
+import WorkspaceSelector from "@/app/(dashboard)/workspace/_components/workspace-selector";
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,17 +25,12 @@ interface ProjectData {
 }
 
 function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
+  const router = useRouter();
   const [navOpened, setNavOpened] = useState(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const pathname = usePathname();
 
-  const isProjectPage = pathname.includes("/manage-project/");
-  const projectId = isProjectPage ? Number(pathname.split("/")[2]) : null;
-
-  // const { data: projectData } = useProjectById(projectId as number) as {
-  //   data: ProjectData | undefined;
-  //   isLoading: boolean;
-  // };
+  const { data: workspaces, isLoading } = useGetAllWorkspace();
 
   const handleLogout = async () => {
     await signOut({
@@ -43,26 +39,18 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
     });
   };
 
-  // useEffect(() => {
-  //   if (navOpened) {
-  //     document.body.classList.add("overflow-hidden");
-  //   } else {
-  //     document.body.classList.remove("overflow-hidden");
-  //   }
-  // }, [navOpened]);
+  useEffect(() => {
+    if (!isLoading && workspaces) {
+      const workspaceArray = workspaces.data;
+      if (!workspaceArray || workspaceArray.length === 0) {
+        router.replace("/workspace/create");
+      } else {
+        router.replace(`/workspace/${workspaceArray[0].id}`);
+      }
+    }
+  }, [workspaces, isLoading, router]);
 
-  // const getFilteredProjectLinks = (projectId: string): SideLink[] => {
-  //   const links = getNavigationLinks(true, projectId);
-  //   if (!projectData?.data?.is_wing) {
-  //     return links.filter((link) => link.title !== "Manage Wing");
-  //   }
-  //   return links;
-  // };
-
-  // const navigationLinks =
-  //   isProjectPage && projectId
-  //     ? getFilteredProjectLinks(projectId.toString())
-  //     : getNavigationLinks(false, null);
+  if (isLoading || !workspaces) return null;
 
   const navigationLinks = getNavigationLinks(false, null);
 
@@ -115,18 +103,16 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
         </Layout.Header>
 
         <div className="p-4 border-b border-border">
-          <div className="flex items-center justify-between">
-            <h1>Workspaces</h1>
-            <div className="bg-gray-100 rounded-md p-1 cursor-pointer">
-              <Plus size={14}/>
-            </div>
-          </div>
+          <WorkspaceSelector
+            workspaces={workspaces?.data || []}
+            onSelect={(id) => router.push(`/workspace/${id}`)}
+          />
         </div>
 
         <Nav
           id="sidebar-menu"
           className={cn(
-            "z-40 h-full flex-1 overflow-hidden",
+            "z-40 h-full flex-1 overflow-x-hidden",
             navOpened ? "max-h-full" : "max-h-0 py-0 md:max-h-full md:py-2"
           )}
           closeNav={() => setNavOpened(false)}
@@ -134,20 +120,22 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
           links={navigationLinks}
         />
 
-         <div className={cn(
-            "z-40 h-full flex-1 overflow-auto p-4 border-t mt-2 border-border" ,
+        <div
+          className={cn(
+            "z-40 h-full flex-1 overflow-auto p-4 border-t mt-2 border-border",
             navOpened ? "max-h-full" : "max-h-0 py-0 md:max-h-full md:py-2"
-          )}>
+          )}
+        >
           <div className="flex items-center justify-between">
             <h1>Projects</h1>
             <div className="bg-gray-100 rounded-md p-1 cursor-pointer">
-              <Plus size={14}/>
+              <Plus size={14} />
             </div>
           </div>
         </div>
 
         {/* Logout Button */}
-        <div
+        {/* <div
           className={cn(
             "border-t border-border p-4",
             isCollapsed ? "flex justify-center" : ""
@@ -167,7 +155,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
             <LogOut className="h-5 w-5" />
             {!isCollapsed && <span className="font-medium">Logout</span>}
           </Button>
-        </div>
+        </div> */}
 
         {showLogoutPopup && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
