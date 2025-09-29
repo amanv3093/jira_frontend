@@ -5,3 +5,4 @@ export interface ApiResponse {
   data?: RazorpayOrdersResponse | p | object | null | string;
   errors: string[];
 }
+

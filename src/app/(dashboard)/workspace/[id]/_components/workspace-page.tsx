@@ -7,8 +7,8 @@ import React from "react";
 function WorkspacePage() {
   const params = useParams();
   const workspaceId = params?.id as string;
-  const { data: workspaceData } = useGetWorkspaceById(workspaceId);
-  console.log("workspaceData", workspaceData);
+  // const { data: workspaceData } = useGetWorkspaceById(workspaceId);
+  // console.log("workspaceData", workspaceData);
   return <div>WorkspacePage</div>;
 }
 

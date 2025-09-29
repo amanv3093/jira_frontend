@@ -7,11 +7,15 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import { SideLink, getNavigationLinks } from "@/constants/sidelinks";
 import { useGetAllWorkspace } from "@/hooks/workspace";
 import { useRouter } from "next/navigation";
 import WorkspaceSelector from "@/app/(dashboard)/workspace/_components/workspace-selector";
+import Modal from "../modal/custom-modal";
+import ProjectCreateForm from "@/app/(dashboard)/project/_component/project-create";
+import { useGetProjectByWorkspaceId } from "@/hooks/project";
+import axios from "axios";
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,31 +30,90 @@ interface ProjectData {
 
 function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const workspaceIdFromUrl = pathname?.split("/")[2] || null;
+
+  const { data: workspaces, isLoading: workspacesLoading } =
+    useGetAllWorkspace();
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(
+    workspaceIdFromUrl
+  );
+
+  // const { data: projects, isLoading: projectsLoading } = selectedWorkspaceId
+  //   ? useGetProjectByWorkspaceId(selectedWorkspaceId)
+  //   : { data: [], isLoading: false };
+
   const [navOpened, setNavOpened] = useState(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-  const pathname = usePathname();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const onClose = () => setIsModalOpen(false);
 
-  const { data: workspaces, isLoading } = useGetAllWorkspace();
-
-  const handleLogout = async () => {
-    await signOut({
-      callbackUrl: "/sign-in",
-      redirect: true,
-    });
-  };
-
+  // Update selected workspace when URL changes
   useEffect(() => {
-    if (!isLoading && workspaces) {
-      const workspaceArray = workspaces.data;
-      if (!workspaceArray || workspaceArray.length === 0) {
+    if (workspaceIdFromUrl && workspaceIdFromUrl !== selectedWorkspaceId) {
+      setSelectedWorkspaceId(workspaceIdFromUrl);
+    }
+  }, [workspaceIdFromUrl]);
+
+  // Redirect if no workspace
+  const [projects, setProjects] = useState([]);
+  useEffect(() => {
+    if (!workspacesLoading && workspaces && !workspaceIdFromUrl) {
+      if (workspaces.length === 0) {
         router.replace("/workspace/create");
       } else {
-        router.replace(`/workspace/${workspaceArray[0].id}`);
+        router.replace(`/workspace/${workspaces[0].id}`);
       }
     }
-  }, [workspaces, isLoading, router]);
+  }, [workspacesLoading, workspaces, workspaceIdFromUrl]);
 
-  if (isLoading || !workspaces) return null;
+  useEffect(() => {
+    if (!selectedWorkspaceId) return;
+
+    const fetchProjects = async () => {
+      try {
+        const session = await getSession();
+        const token = session?.user?.token;
+
+        if (!token) {
+          console.error("No token found in session");
+          return;
+        }
+
+        const response = await fetch(
+          `http://localhost:9000/api/v1/project/workspace/${selectedWorkspaceId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error("Failed to fetch projects:", response.status);
+          return;
+        }
+
+        const data = await response.json();
+        console.log("projects updated:", data);
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+
+    fetchProjects();
+  }, [selectedWorkspaceId]);
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/sign-in", redirect: true });
+  };
+
+  if (workspacesLoading || !workspaces) {
+    return <div>Loading...</div>;
+  }
 
   const navigationLinks = getNavigationLinks(false, null);
 
@@ -104,8 +167,11 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
 
         <div className="p-4 border-b border-border">
           <WorkspaceSelector
-            workspaces={workspaces?.data || []}
-            onSelect={(id) => router.push(`/workspace/${id}`)}
+            workspaces={workspaces || []}
+            onSelect={(id) => {
+              setSelectedWorkspaceId(id);
+              router.push(`/workspace/${id}`);
+            }}
           />
         </div>
 
@@ -128,11 +194,36 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
         >
           <div className="flex items-center justify-between">
             <h1>Projects</h1>
-            <div className="bg-gray-100 rounded-md p-1 cursor-pointer">
+            <div
+              className="bg-gray-100 rounded-md p-1 cursor-pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
               <Plus size={14} />
             </div>
           </div>
+          <ul className="space-y-1">
+            {projects?.length ? (
+              projects.map((project: any) => (
+                <li key={project.id}>
+                  <Link
+                    href={`/workspace/${workspaceIdFromUrl}/project/${project.id}`}
+                    className="block px-2 py-1 rounded hover:bg-gray-200"
+                  >
+                    {project.name}
+                  </Link>
+                </li>
+              ))
+            ) : (
+              <li className="text-sm text-muted-foreground">No projects</li>
+            )}
+          </ul>
         </div>
+
+        {isModalOpen && (
+          <Modal isOpen={isModalOpen} onClose={onClose}>
+            <ProjectCreateForm onClose={onClose} workspaces={workspaces} />
+          </Modal>
+        )}
 
         {/* Logout Button */}
         {/* <div
