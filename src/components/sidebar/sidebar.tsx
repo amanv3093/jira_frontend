@@ -13,9 +13,9 @@ import { useGetAllWorkspace } from "@/hooks/workspace";
 import { useRouter } from "next/navigation";
 import WorkspaceSelector from "@/app/(dashboard)/workspace/_components/workspace-selector";
 import Modal from "../modal/custom-modal";
-import ProjectCreateForm from "@/app/(dashboard)/project/_component/project-create";
 import { useGetProjectByWorkspaceId } from "@/hooks/project";
 import axios from "axios";
+import ProjectCreateForm from "@/app/(dashboard)/workspace/[id]/project/_components/project-create";
 interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
@@ -98,7 +98,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
 
         const data = await response.json();
         console.log("projects updated:", data);
-        setProjects(data);
+        setProjects(data?.data);
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -203,16 +203,24 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
           </div>
           <ul className="space-y-1">
             {projects?.length ? (
-              projects.map((project: any) => (
-                <li key={project.id}>
-                  <Link
-                    href={`/workspace/${workspaceIdFromUrl}/project/${project.id}`}
-                    className="block px-2 py-1 rounded hover:bg-gray-200"
-                  >
-                    {project.name}
-                  </Link>
-                </li>
-              ))
+              projects.map((project: any) => {
+                const projectUrl = `/workspace/${workspaceIdFromUrl}/project/${project.id}`;
+                const isActive = pathname === projectUrl;
+
+                return (
+                  <li key={project.id}>
+                    <Link
+                      href={projectUrl}
+                      className={cn(
+                        "block px-2 py-1 rounded hover:bg-gray-200",
+                        isActive && "bg-gray-200 font-medium"
+                      )}
+                    >
+                      {project.name}
+                    </Link>
+                  </li>
+                );
+              })
             ) : (
               <li className="text-sm text-muted-foreground">No projects</li>
             )}
