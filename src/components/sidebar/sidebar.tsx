@@ -8,7 +8,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { getSession, signOut } from "next-auth/react";
-import { SideLink, getNavigationLinks } from "@/constants/sidelinks";
+import {
+  SideLink,
+  getNavigationLinks,
+  getWorkspaceLinks,
+} from "@/constants/sidelinks";
 import { useGetAllWorkspace } from "@/hooks/workspace";
 import { useRouter } from "next/navigation";
 import WorkspaceSelector from "@/app/(dashboard)/workspace/_components/workspace-selector";
@@ -39,24 +43,17 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
     workspaceIdFromUrl
   );
 
-  // const { data: projects, isLoading: projectsLoading } = selectedWorkspaceId
-  //   ? useGetProjectByWorkspaceId(selectedWorkspaceId)
-  //   : { data: [], isLoading: false };
-
   const [navOpened, setNavOpened] = useState(false);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const onClose = () => setIsModalOpen(false);
 
-  // Update selected workspace when URL changes
   useEffect(() => {
     if (workspaceIdFromUrl && workspaceIdFromUrl !== selectedWorkspaceId) {
       setSelectedWorkspaceId(workspaceIdFromUrl);
     }
   }, [workspaceIdFromUrl]);
 
-  // Redirect if no workspace
-  const [projects, setProjects] = useState([]);
   useEffect(() => {
     if (!workspacesLoading && workspaces && !workspaceIdFromUrl) {
       if (workspaces.length === 0) {
@@ -67,55 +64,66 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
     }
   }, [workspacesLoading, workspaces, workspaceIdFromUrl]);
 
-  useEffect(() => {
-    if (!selectedWorkspaceId) return;
+  const { data: projects, isLoading: projectsLoading } = selectedWorkspaceId
+    ? useGetProjectByWorkspaceId(selectedWorkspaceId)
+    : { data: [], isLoading: false };
 
-    const fetchProjects = async () => {
-      try {
-        const session = await getSession();
-        const token = session?.user?.token;
-
-        if (!token) {
-          console.error("No token found in session");
-          return;
-        }
-
-        const response = await fetch(
-          `http://localhost:9000/api/v1/project/workspace/${selectedWorkspaceId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (!response.ok) {
-          console.error("Failed to fetch projects:", response.status);
-          return;
-        }
-
-        const data = await response.json();
-        console.log("projects updated:", data);
-        setProjects(data?.data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-
-    fetchProjects();
-  }, [selectedWorkspaceId]);
-
+  console.log("projects", projects);
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/sign-in", redirect: true });
   };
 
-  if (workspacesLoading || !workspaces) {
-    return <div>Loading...</div>;
+  if (workspacesLoading || !workspaces || projectsLoading) {
+    return (
+      <aside
+        className={cn(
+          `fixed left-0 right-0 top-0 z-50 w-full border-r-2 border-r-muted md:bottom-0 md:right-auto md:h-svh ${
+            isCollapsed ? "md:w-14" : "md:w-64"
+          }`,
+          className
+        )}
+      >
+        <Layout fixed>
+          <div className="w-full   h-16 shadow-sm p-4">
+            <div className="bg-gray-200 h-8 w-full rounded animate-pulse" />
+          </div>
+
+          <div className="p-4 border-b border-border space-y-2">
+            {/* Workspace selector skeleton */}
+            <div className="bg-gray-200 h-10 w-full rounded animate-pulse" />
+          </div>
+
+          <nav className="flex-1 overflow-auto p-4 space-y-2">
+            {/* Navigation links skeleton */}
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-gray-200 h-10 w-full rounded animate-pulse"
+              />
+            ))}
+          </nav>
+
+          <div className="p-4 border-t border-border">
+            {/* Projects skeleton */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="bg-gray-200 h-6 w-24 rounded animate-pulse" />
+              <div className="bg-gray-200 h-6 w-6 rounded-md animate-pulse" />
+            </div>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-gray-200 h-8 w-full rounded mb-1 animate-pulse"
+              />
+            ))}
+          </div>
+        </Layout>
+      </aside>
+    );
   }
 
-  const navigationLinks = getNavigationLinks(false, null);
+  const navigationLinks = selectedWorkspaceId
+    ? getWorkspaceLinks(selectedWorkspaceId)
+    : [];
 
   return (
     <aside

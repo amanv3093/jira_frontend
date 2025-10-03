@@ -44,7 +44,7 @@ export const useCreateWorkspace = () => {
     mutationFn: workspaceService.createWorkspace,
     onSuccess: (data) => {
       toast.success("Workspace created successfully");
-      queryClient.invalidateQueries({ queryKey: ["getAllWorkspace2"] });
+      queryClient.invalidateQueries({ queryKey: ["getAllWorkspace"] });
     },
     onError: (error: any) => {
       const message =

@@ -53,14 +53,13 @@ export const useGetProjectById = (id: string) => {
 
 export const useGetProjectByWorkspaceId = (id?: string) => {
   return useQuery({
-    queryKey: ["getProjectByWorkspaceId", id],
+    queryKey: ["getAllProject", id],
     queryFn: async () => {
       if (!id) return [];
       const response = await projectService.getProjectByWorkspaceId(id);
       return response.data;
     },
     enabled: !!id,
-    // refetchOnWindowFocus: false,
-    // staleTime: 0,
+    
   });
 };

@@ -89,19 +89,22 @@ function NavLink({
   closeNav,
   subLink = false,
 }: NavLinkProps) {
-  const { checkActiveNav } = useCheckActiveNav()
+   const { checkActiveNav } = useCheckActiveNav()
+  const isActive = checkActiveNav(href)
   return (
     <Link
       href={href}
       onClick={closeNav}
-      className={cn(
+       className={cn(
         buttonVariants({
-          variant: checkActiveNav(href) ? 'secondary' : 'ghost',
+          variant: isActive ? 'ghost' : 'ghost', // keep ghost base so we control styles
           size: 'sm',
         }),
-        'h-11 justify-start text-wrap rounded-lg px-4 transition-all duration-200 hover:bg-primary/10',
-        checkActiveNav(href) && 'bg-primary/15 font-medium text-primary hover:bg-primary/20',
-        subLink && 'h-10 w-full border-l-2 border-l-primary/20 px-3 text-sm'
+        'h-11 justify-start rounded-lg px-4 transition-all duration-200',
+        subLink && 'h-10 w-full border-l-2 border-l-primary/20 px-3 text-sm',
+        isActive
+          ? 'bg-primary/15 font-medium text-primary hover:bg-primary/20'
+          : 'hover:bg-primary/10'
       )}
       aria-current={checkActiveNav(href) ? 'page' : undefined}
     >

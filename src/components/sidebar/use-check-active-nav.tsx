@@ -6,11 +6,17 @@ export default function useCheckActiveNav() {
   const pathname = usePathname();
 
   const checkActiveNav = (nav: string) => {
-    const pathArray = pathname.split("/").filter((item: string) => item !== "");
+    if (!pathname) return false;
 
-    if (nav === "/" && pathArray.length < 1) return true;
+    if (nav === "/") return pathname === "/";
 
-    return pathArray.includes(nav.replace(/^\//, ""));
+    if (pathname === nav) return true;
+
+    const isWorkspaceRoot = /^\/workspace\/[^/]+$/.test(nav);
+    if (isWorkspaceRoot) return false;
+
+    // otherwise allow nested matches
+    return pathname.startsWith(nav + "/");
   };
 
   return { checkActiveNav };
