@@ -1,5 +1,5 @@
 import { fetchHandler } from "@/lib/api-utils";
-import { ApiResponse } from "@/types/index.d";
+import { ApiResponse } from "@/types";
 
 const PROJECT_API = {
   POST: "project",

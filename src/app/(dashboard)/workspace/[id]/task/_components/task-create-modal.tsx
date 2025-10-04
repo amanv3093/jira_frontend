@@ -16,28 +16,44 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 
+import {
+  Task,
+  TaskStatus,
+  TaskPriority,
+  Member,
+  Project,
+  Workspace,
+} from "@/types";
 
-import { TaskPriority, TaskStatus } from "@/types";
 import { useCreateTask } from "@/hooks/task";
 interface Props {
   onClose: () => void;
-  users?: { id: string; name: string }[]; 
+  members: Member[];
+  project: Project[];
 }
 
 export const TaskSchema = z.object({
   task_name: z.string().min(1),
   status: z.nativeEnum(TaskStatus),
   priority: z.nativeEnum(TaskPriority),
-  dueDate: z.string().datetime().optional().nullable(),
-  projectId: z.string(),
+  dueDate: z
+    .preprocess((val) => {
+      if (typeof val === "string" && val.trim() !== "") {
+        return new Date(val).toISOString();
+      }
+      return val;
+    }, z.string().datetime("Invalid datetime"))
+    .refine((val) => !!val, { message: "Due date is required" }),
+
+  projectId: z.string().min(1, "Project is required"),
   assignments: z
     .array(z.object({ userId: z.string(), assignedAt: z.string().optional() }))
-    .optional(),
+    .min(1, "At least one assignment is required"),
 });
 
 type TaskFormData = z.infer<typeof TaskSchema>;
 
-const TaskCreateModal = ({ onClose, users = [] }: Props) => {
+const TaskCreateModal = ({ onClose, members, project }: Props) => {
   const createTask = useCreateTask();
   const {
     register,
@@ -49,7 +65,7 @@ const TaskCreateModal = ({ onClose, users = [] }: Props) => {
     resolver: zodResolver(TaskSchema),
     defaultValues: {
       task_name: "",
-      projectId:"1",
+      projectId: "",
       status: TaskStatus.BACKLOG,
       priority: TaskPriority.MEDIUM,
       dueDate: undefined,
@@ -58,16 +74,16 @@ const TaskCreateModal = ({ onClose, users = [] }: Props) => {
   });
 
   const onSubmit = (data: TaskFormData) => {
-    // createTask.mutate(data, {
-    //   onSuccess: () => {
-    //     reset();
-    //     onClose();
-    //   },
-    // });
+    createTask.mutate(data, {
+      onSuccess: () => {
+        reset();
+        onClose();
+      },
+    });
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 mx-auto w-[22rem] p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Create Task</h2>
@@ -93,6 +109,33 @@ const TaskCreateModal = ({ onClose, users = [] }: Props) => {
           {errors.task_name && (
             <p className="text-sm text-red-500 mt-1">
               {errors.task_name.message}
+            </p>
+          )}
+        </div>
+        {/* Project Select */}
+        <div>
+          <Label>Project</Label>
+          <Controller
+            control={control}
+            name="projectId"
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {project.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.projectId && (
+            <p className="text-sm text-red-500 mt-1">
+              {errors.projectId.message}
             </p>
           )}
         </div>
@@ -144,9 +187,18 @@ const TaskCreateModal = ({ onClose, users = [] }: Props) => {
         </div>
 
         {/* Due Date */}
-        <div>
-          <Label>Due Date</Label>
-          <Input type="datetime-local" {...register("dueDate")} />
+        <div className="">
+          <Label className="w-1/3 text-left">Due Date</Label>
+          <Input
+            type="datetime-local"
+            {...register("dueDate")}
+            className="w-full"
+          />
+          {errors.dueDate && (
+            <p className="text-sm text-red-500 mt-1">
+              {errors.dueDate.message}
+            </p>
+          )}
         </div>
 
         {/* Assignments */}
@@ -170,15 +222,20 @@ const TaskCreateModal = ({ onClose, users = [] }: Props) => {
                   <SelectValue placeholder="Select user" />
                 </SelectTrigger>
                 <SelectContent>
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.name}
+                  {members.map((member) => (
+                    <SelectItem key={member.userId} value={member.userId}>
+                      {member.user?.full_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
           />
+          {errors.assignments && (
+            <p className="text-sm text-red-500 mt-1">
+              {errors.assignments.message}
+            </p>
+          )}
         </div>
 
         <Button type="submit" className="w-full">

@@ -46,7 +46,7 @@ export default function TaskTable({ data}: TaskTableProps) {
 //   }, [tasks, filterValues]);
 
   const table = useReactTable({
-    data: tasks,
+    data: data,
     columns: Columns,
     getCoreRowModel: getCoreRowModel(),
   });

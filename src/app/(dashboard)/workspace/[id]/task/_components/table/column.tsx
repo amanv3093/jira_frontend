@@ -1,10 +1,11 @@
 // taskColumns.tsx
 import { Task, TaskStatus } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
+import TaskAction from "./action";
 
 export const Columns: ColumnDef<Task>[] = [
   {
-    accessorKey: "name",
+    accessorKey: "task_name",
     header: "Task Name",
   },
   {
@@ -13,18 +14,30 @@ export const Columns: ColumnDef<Task>[] = [
     cell: ({ getValue }) => getValue<TaskStatus>().replace("_", " "),
   },
   {
-    accessorKey: "assignees",
+    accessorKey: "assignments",
     header: "Assignees",
-    cell: ({ getValue }) => (getValue<string[]>() || []).join(", "),
+    cell: ({ getValue }) => {
+      const assignments = getValue<any[]>() || [];
+      return assignments
+        .map((a) => a.member?.user?.full_name || "Unknown")
+        .join(", ");
+    },
   },
   {
-    accessorKey: "project",
+    accessorKey: "projectId",
     header: "Project",
   },
   {
     accessorKey: "dueDate",
     header: "Due Date",
     cell: ({ getValue }) =>
-      getValue<string>() ? new Date(getValue<string>()).toLocaleDateString() : "-",
+      getValue<string>()
+        ? new Date(getValue<string>()).toLocaleDateString()
+        : "-",
+  },
+  {
+    id: "actions",
+    header: "",
+    cell: ({ row }) => <TaskAction task={row.original} />,
   },
 ];

@@ -39,12 +39,24 @@ export const useCreateTask = () => {
     mutationFn: taskService.createTask,
     onSuccess: (data) => {
       toast.success("Task created successfully");
-      queryClient.invalidateQueries({ queryKey: ["getAllTask"] });
+      queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
     },
     onError: (error: any) => {
       const message =
         error?.response?.data?.error || "Failed to create Task";
       toast.error(message);
     },
+  });
+};
+export const useGetTaskByWorkspaceId = (id?: string) => {
+  return useQuery({
+    queryKey: ["getAllTaskByWorkspaceId", id],
+    queryFn: async () => {
+      if (!id) return [];
+      const response = await taskService.getTaskByWorkspaceId(id);
+      return response.data;
+    },
+    enabled: !!id,
+    
   });
 };
