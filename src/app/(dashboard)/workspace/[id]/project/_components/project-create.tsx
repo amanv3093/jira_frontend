@@ -10,7 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useCreateProject } from "@/hooks/project";
 
 // ---------------- Zod Schema ----------------
@@ -96,27 +102,44 @@ export default function ProjectCreateForm({
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Project Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">Project Name</label>
-              <Input placeholder="e.g., Apollo Redesign" {...register("name")} />
-              {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+              <label className="block text-sm font-medium mb-1">
+                Project Name
+              </label>
+              <Input
+                placeholder="e.g., Apollo Redesign"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-sm text-red-600">{errors.name.message}</p>
+              )}
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label className="block text-sm font-medium mb-1">
+                Description
+              </label>
               <Textarea
                 placeholder="Short summary of the project…"
                 className="min-h-[100px]"
                 {...register("description")}
               />
-              {errors.description && <p className="text-sm text-red-600">{errors.description.message}</p>}
+              {errors.description && (
+                <p className="text-sm text-red-600">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
 
             {/* Workspace */}
             <div>
-              <label className="block text-sm font-medium mb-1">Workspace</label>
+              <label className="block text-sm font-medium mb-1">
+                Workspace
+              </label>
               <Select
-                onValueChange={(val) => setValue("workspaceId", val, { shouldValidate: true })}
+                onValueChange={(val) =>
+                  setValue("workspaceId", val, { shouldValidate: true })
+                }
                 defaultValue={workspaceIdFromUrl || ""}
               >
                 <SelectTrigger>
@@ -130,16 +153,24 @@ export default function ProjectCreateForm({
                       </SelectItem>
                     ))
                   ) : (
-                    <div className="px-3 py-2 text-sm opacity-70">No workspaces</div>
+                    <div className="px-3 py-2 text-sm opacity-70">
+                      No workspaces
+                    </div>
                   )}
                 </SelectContent>
               </Select>
-              {errors.workspaceId && <p className="text-sm text-red-600">{errors.workspaceId.message}</p>}
+              {errors.workspaceId && (
+                <p className="text-sm text-red-600">
+                  {errors.workspaceId.message}
+                </p>
+              )}
             </div>
 
             {/* Profile Picture */}
             <div>
-              <label className="block text-sm font-medium mb-1">Profile Picture</label>
+              <label className="block text-sm font-medium mb-1">
+                Profile Picture
+              </label>
               <Input
                 type="file"
                 accept="image/*"
@@ -158,10 +189,11 @@ export default function ProjectCreateForm({
                   className="mt-2 h-24 w-24 rounded-lg object-cover"
                 />
               )}
-              {errors.profilePic && <p className="text-sm text-red-600">{errors.profilePic.message}</p>}
             </div>
 
-            {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+            {serverError && (
+              <p className="text-sm text-red-600">{serverError}</p>
+            )}
 
             {/* Buttons */}
             <div className="flex items-center gap-3">

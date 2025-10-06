@@ -1,12 +1,13 @@
 // src/types/index.d.ts
 
-export interface ApiResponse {
+export interface ApiResponse<T = any> {
   success: boolean;
   statusCode: number;
   message: string;
-  data?: any; // Replace with actual type if available
+  data?: T;      // Now `data` can be any type you specify
   errors: string[];
 }
+
 
 export enum TaskStatus {
   BACKLOG = "BACKLOG",
@@ -73,14 +74,14 @@ export interface Member {
 }
 
 export interface Project {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
   profilePic?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   workspaceId: string;
-  ownerId: string;
+  ownerId?: string;
 }
 
 export interface Workspace {

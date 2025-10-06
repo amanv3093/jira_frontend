@@ -12,15 +12,24 @@ import {
 } from "@/lib/mutation-utils";
 import { projectService } from "@/services/project";
 import { toast } from "sonner";
+import { Project } from "@/types";
+
 
 export const useCreateProject = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: projectService.createProject,
-    onSuccess: (data) => {
+    mutationFn: async (formData: FormData) => {
+      const response = await projectService.createProject(formData);
+      return response.data!;
+    },
+    onSuccess: (project: Project) => {
       toast.success("Project created successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllProject"] });
+
+      queryClient.invalidateQueries({
+        queryKey: ["getWorkspaceById", project.workspaceId],
+      });
     },
     onError: (error: any) => {
       const message =
@@ -60,6 +69,5 @@ export const useGetProjectByWorkspaceId = (id?: string) => {
       return response.data;
     },
     enabled: !!id,
-    
   });
 };

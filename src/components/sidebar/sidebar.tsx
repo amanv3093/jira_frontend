@@ -242,7 +242,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
         )}
 
         {/* Logout Button */}
-        {/* <div
+        <div
           className={cn(
             "border-t border-border p-4",
             isCollapsed ? "flex justify-center" : ""
@@ -262,7 +262,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
             <LogOut className="h-5 w-5" />
             {!isCollapsed && <span className="font-medium">Logout</span>}
           </Button>
-        </div> */}
+        </div>
 
         {showLogoutPopup && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

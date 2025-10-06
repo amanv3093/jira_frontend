@@ -124,7 +124,7 @@ const TaskCreateModal = ({ onClose, members, project }: Props) => {
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
                 <SelectContent>
-                  {project.map((project) => (
+                  {project?.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
                       {project.name}
                     </SelectItem>
@@ -222,7 +222,7 @@ const TaskCreateModal = ({ onClose, members, project }: Props) => {
                   <SelectValue placeholder="Select user" />
                 </SelectTrigger>
                 <SelectContent>
-                  {members.map((member) => (
+                  {members?.map((member) => (
                     <SelectItem key={member.userId} value={member.userId}>
                       {member.user?.full_name}
                     </SelectItem>
