@@ -54,19 +54,21 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
     }
   }, [workspaceIdFromUrl]);
 
-  useEffect(() => {
-    if (!workspacesLoading && workspaces && !workspaceIdFromUrl) {
-      if (workspaces.length === 0) {
-        router.replace("/workspace/create");
-      } else {
-        router.replace(`/workspace/${workspaces[0].id}`);
-      }
-    }
-  }, [workspacesLoading, workspaces, workspaceIdFromUrl]);
+  // useEffect(() => {
+  //   if (!workspacesLoading && workspaces && !workspaceIdFromUrl) {
+  //     if (workspaces.length === 0) {
+  //       router.replace("/workspace/create");
+  //     } else {
+  //       router.replace(`/workspace/${workspaces[0].id}`);
+  //     }
+  //   }
+  // }, [workspacesLoading, workspaces, workspaceIdFromUrl]);
 
-  const { data: projects, isLoading: projectsLoading } = selectedWorkspaceId
-    ? useGetProjectByWorkspaceId(selectedWorkspaceId)
-    : { data: [], isLoading: false };
+  // const { data: projects, isLoading: projectsLoading } = selectedWorkspaceId
+  //   ? useGetProjectByWorkspaceId(selectedWorkspaceId)
+  //   : { data: [], isLoading: false };
+  const { data: projects = [], isLoading: projectsLoading } =
+    useGetProjectByWorkspaceId(selectedWorkspaceId ?? "");
 
   console.log("projects", projects);
   const handleLogout = async () => {
@@ -210,7 +212,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
             </div>
           </div>
           <ul className="space-y-1">
-            {projects?.length ? (
+            {projects.length > 0 ? (
               projects.map((project: any) => {
                 const projectUrl = `/workspace/${workspaceIdFromUrl}/project/${project.id}`;
                 const isActive = pathname === projectUrl;

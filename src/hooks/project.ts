@@ -3,6 +3,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  UseQueryOptions,
 } from "@tanstack/react-query";
 import { useCustomToast } from "@/components/providers/toaster-provider";
 
@@ -60,7 +61,10 @@ export const useGetProjectById = (id: string) => {
   });
 };
 
-export const useGetProjectByWorkspaceId = (id?: string) => {
+export const useGetProjectByWorkspaceId = (
+  id?: string,
+  options?: Omit<UseQueryOptions<Project[], Error>, "queryKey" | "queryFn">
+) => {
   return useQuery({
     queryKey: ["getAllProject", id],
     queryFn: async () => {
@@ -68,6 +72,7 @@ export const useGetProjectByWorkspaceId = (id?: string) => {
       const response = await projectService.getProjectByWorkspaceId(id);
       return response.data;
     },
-    enabled: !!id,
+    enabled: !!id, 
+    ...options,
   });
 };

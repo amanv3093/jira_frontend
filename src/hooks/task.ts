@@ -48,15 +48,18 @@ export const useCreateTask = () => {
     },
   });
 };
-export const useGetTaskByWorkspaceId = (id?: string) => {
+export const useGetTaskByWorkspaceId = (id?: string, filters?: any) => {
   return useQuery({
-    queryKey: ["getAllTaskByWorkspaceId", id],
+    queryKey: ["getAllTaskByWorkspaceId", id,filters],
     queryFn: async () => {
       if (!id) return [];
-      const response = await taskService.getTaskByWorkspaceId(id);
+      const response = await taskService.getTaskByWorkspaceId(id,filters);
       return response.data;
     },
-    enabled: !!id,
+    enabled: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    placeholderData: keepPreviousData,
     
   });
 };

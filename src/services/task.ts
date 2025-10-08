@@ -14,6 +14,24 @@ export const taskService = {
     fetchHandler<ApiResponse>(TASK_API.GET_BY_ID(id), "GET"),
   createTask: (payload: any) =>
     fetchHandler<ApiResponse>(TASK_API.POST, "POST", payload),
-  getTaskByWorkspaceId: (id: string) =>
-    fetchHandler<ApiResponse>(TASK_API.GET_BY_WORKSPACE_ID(id), "GET"),
+  getTaskByWorkspaceId: (id: string, filters?: Record<string, any>) => {
+    let url = TASK_API.GET_BY_WORKSPACE_ID(id);
+    if (filters && Object.keys(filters).length > 0) {
+      const params = new URLSearchParams();
+
+      if (filters.status?.length)
+        params.append("status", filters.status.join(","));
+      if (filters.priority?.length)
+        params.append("priority", filters.priority.join(","));
+      if (filters.project?.length)
+        params.append("project", filters.project.join(","));
+      if (filters.assignee?.length)
+        params.append("assignee", filters.assignee.join(","));
+      if (filters.search) params.append("search", filters.search);
+
+      url += `?${params.toString()}`;
+    }
+
+    return fetchHandler<ApiResponse>(url, "GET");
+  },
 };
