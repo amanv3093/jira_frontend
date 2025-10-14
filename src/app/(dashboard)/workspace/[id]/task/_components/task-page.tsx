@@ -10,11 +10,19 @@ import Loader from "@/app/Loader";
 import { useGetWorkspaceById } from "@/hooks/workspace";
 import TaskFilters from "./task-filter";
 import { useForm, FormProvider } from "react-hook-form";
-import { Search } from "lucide-react";
+import { Eye, Plus, Search, LayoutList, Kanban } from "lucide-react";
+import TaskKanban from "./task-kanban";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
 
 function TaskPage() {
   const params = useParams();
   const workspaceId = params?.id as string;
+  const [viewMode, setViewMode] = useState("table");
   const [filters, setFilters] = useState({
     status: [] as string[],
     priority: [] as string[],
@@ -80,10 +88,9 @@ function TaskPage() {
     <div>
       <div className="flex justify-between items-center">
         <p>Task Page</p>
-        <Button onClick={() => setIsModalOpen(true)}>Create</Button>
+        {/* <Button onClick={() => setIsModalOpen(true)}>Create</Button> */}
       </div>
-      <div className="">
-        
+      <div className="flex justify-between items-center">
         <FormProvider {...methods}>
           <div>
             <FormProvider {...methods}>
@@ -95,21 +102,66 @@ function TaskPage() {
             </FormProvider>
           </div>
         </FormProvider>
-        {/* <div className="flex gap-2">
+        <div className="flex gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-2 min-w-[100px] focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {viewMode === "table" ? (
+                  <>
+                    <LayoutList size={16} /> Table
+                  </>
+                ) : (
+                  <>
+                    <Kanban size={16} /> Kanban
+                  </>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="start"
+              sideOffset={4}
+              className="bg-white border border-gray-200 rounded-md shadow-lg p-1 z-50 w-[var(--radix-dropdown-menu-trigger-width)]"
+            >
+              <DropdownMenuItem
+                onClick={() => setViewMode("table")}
+                className={`flex items-center gap-2 cursor-pointer px-2 py-1 rounded text-sm hover:bg-gray-100 outline-none focus:outline-none focus:ring-0 border-none ${
+                  viewMode === "table" ? "bg-blue-100 text-info" : ""
+                }`}
+              >
+                <LayoutList size={14} /> Table
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => setViewMode("kanban")}
+                className={`flex items-center gap-2 cursor-pointer px-2 py-1 rounded text-sm hover:bg-gray-100 outline-none focus:outline-none focus:ring-0 border-none ${
+                  viewMode === "kanban" ? "bg-blue-100 text-info" : ""
+                }`}
+              >
+                <Kanban size={16} /> Kanban
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             variant="outline"
-            onClick={() => {
-              setSelectedProjects([]);
-              setSelectedUsers([]);
-              setSelectedStatuses([]);
-              setSelectedPriorities([]);
-            }}
+            onClick={() => setIsModalOpen(true)}
+            className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 order-gray-300 text-black`}
           >
-            Clear
+            <Plus />
+            Create
           </Button>
-        </div> */}
+        </div>
       </div>
-      <TaskTable data={task} />
+
+      {viewMode === "kanban" ? (
+        <TaskKanban data={task || []} />
+      ) : (
+        <TaskTable data={task || []} />
+      )}
 
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={onClose}>

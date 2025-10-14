@@ -12,7 +12,17 @@ import {
   DropdownMenuPortal,
 } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ListFilter, Search, SearchX, Squirrel } from "lucide-react";
+import {
+  BrushCleaning,
+  Flag,
+  Folder,
+  ListChecks,
+  ListFilter,
+  Search,
+  SearchX,
+  Squirrel,
+  UserPlus,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Member, Project } from "@/types";
 
@@ -96,14 +106,18 @@ export default function TaskFilters({
     title: string,
     items: { key: string; label: string }[],
     selected: string[],
-    setSelected: (items: string[]) => void
+    setSelected: (items: string[]) => void,
+    Icon?: React.ElementType
   ) => {
     const [localSearch, setLocalSearch] = useState("");
 
     return (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-gray-100 data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-[#1868db] outline-none">
-          <span>{title}</span>{" "}
+        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-gray-100 data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
+          <div className="flex items-center gap-2">
+            {" "}
+            {Icon && <Icon size={14} className="" />} <span>{title}</span>{" "}
+          </div>
           {selected.length > 0 && (
             <span className="bg-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
               {selected.length}
@@ -171,8 +185,11 @@ export default function TaskFilters({
 
     return (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-gray-100 data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-[#1868db] outline-none">
-          <span>Project</span>{" "}
+        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-gray-100 data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
+          <div className="flex items-center gap-2">
+            <Folder size={14} />
+            <span>Project</span>{" "}
+          </div>
           {selectedProjects.length > 0 && (
             <span className="bg-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
               {selectedProjects.length}
@@ -240,8 +257,11 @@ export default function TaskFilters({
 
     return (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-gray-100 data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-[#1868db] outline-none">
-          <span>Assignee</span>{" "}
+        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-gray-100 data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
+          <div className="flex items-center gap-2">
+            <UserPlus size={14} />
+            <span>Assignee</span>
+          </div>
           {selectedUsers.length > 0 && (
             <span className="bg-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
               {selectedUsers.length}
@@ -260,7 +280,7 @@ export default function TaskFilters({
                 placeholder="Search Assignee..."
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
-                className="block w-full pl-10 pr-3 py-1 border border-gray-300 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+                className="block w-full pl-10 pr-3 py-1 border border-gray-300 shadow-sm focus:outline-none focus:ring-1 focus:ring-info sm:text-sm"
               />
             </div>
 
@@ -281,7 +301,7 @@ export default function TaskFilters({
                         : [...prev, m.user.id]
                     );
                   }}
-                  className={`flex justify-between items-center px-2 py-1 text-sm rounded hover:bg-gray-100 ${
+                  className={`flex justify-between items-center px-2 py-1 text-sm rounded hover:bg-gray-100  ${
                     selectedUsers.includes(m.user.id) ? "bg-blue-100" : ""
                   } outline-none focus:outline-none focus:ring-0 border-none cursor-pointer`}
                 >
@@ -328,14 +348,12 @@ export default function TaskFilters({
             variant="outline"
             className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 ${
               totalActiveFilters > 0
-                ? "border-[#1868db] bg-blue-100 text-[#1868db]"
+                ? "border-info bg-blue-100 text-info"
                 : "border-gray-300 text-gray-700"
             }`}
           >
             <ListFilter
-              className={
-                totalActiveFilters > 0 ? "text-[#1868db]" : "text-black"
-              }
+              className={totalActiveFilters > 0 ? "text-info" : "text-black"}
             />
             Filter
             {totalActiveFilters > 0 && (
@@ -348,7 +366,7 @@ export default function TaskFilters({
         {totalActiveFilters > 0 && (
           <Button
             variant="outline"
-             className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1`}
+            className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1`}
             onClick={() => {
               setSelectedProjects([]);
               setSelectedUsers([]);
@@ -374,37 +392,23 @@ export default function TaskFilters({
               "Status",
               allStatuses,
               selectedStatuses,
-              setSelectedStatuses
+              setSelectedStatuses,
+              ListChecks
             )}
             {createFilterSection(
               "Priority",
               allPriorities,
               selectedPriorities,
-              setSelectedPriorities
+              setSelectedPriorities,
+              Flag
             )}
           </DropdownMenuGroup>
 
-          <div className="flex justify-between mt-2 px-1 border-t border-gray-200 pt-1">
+          <div className=" mt-4 px-1 border-t border-gray-200 pt-1">
+            <div className="hover:bg-gray-100 flex items-center px-2 gap-2 w-fit rounded-sm">
+            <BrushCleaning size={14} />
             <button
-              className="w-1/2 hover:bg-gray-100 text-sm py-1"
-              onClick={() => {
-                onFilterChange?.({
-                  project: selectedProjects,
-                  assignee: selectedUsers,
-                  status: selectedStatuses,
-                  priority: selectedPriorities,
-                  search,
-                });
-                setDropdownOpen(false);
-              }}
-            >
-              Apply
-            </button>
-
-            <div className="w-[1px] bg-gray-200"></div>
-
-            <button
-              className="w-1/2 hover:bg-gray-100 text-sm py-1"
+              className="text-[12px] py-1 font-semibold"
               onClick={() => {
                 setSelectedProjects([]);
                 setSelectedUsers([]);
@@ -412,8 +416,9 @@ export default function TaskFilters({
                 setSelectedPriorities([]);
               }}
             >
-              Clear
+              Clear All
             </button>
+            </div>
           </div>
         </DropdownMenuContent>
       </DropdownMenu>

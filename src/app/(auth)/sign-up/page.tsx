@@ -33,18 +33,18 @@ function SignUp() {
   const router = useRouter();
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // Call your signup API
       console.log(data);
       const response = await signup(data);
-      router.push("/login");
-      // Handle success (e.g., show toast, redirect, etc.)
-      console.log("Signup successful:", response);
-      // Example: redirect to login page
-      // router.push("/login");
+      if (response?.success || response?.status === 201) {
+        console.log("Signup successful:", response);
+        router.push("/signin");
+      } else {
+        console.log(response)
+        console.error("Signup failed:", response);
+      }
     } catch (error: any) {
       // Handle errors from the API
       console.error("Signup failed:", error);
-      // Example: show error toast or form error
     }
   };
   return (

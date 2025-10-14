@@ -29,7 +29,7 @@ const mainLinks: SideLink[] = [
     href: "/settings",
     icon: <Settings size={18} />,
   },
-  { title: "Members", label: "", href: "/members", icon: <Users size={18} /> },
+  { title: "Members", label: "", href: "/member", icon: <Users size={18} /> },
 ];
 
 
@@ -37,7 +37,7 @@ export  const getWorkspaceLinks = (workspaceId: string): SideLink[] => [
   { title: "Home", href: `/workspace/${workspaceId}`, icon: <HomeIcon size={18} /> },
   { title: "My Tasks", href: `/workspace/${workspaceId}/task`, icon: <UserCog size={18} /> },
   { title: "Settings", href: `/workspace/${workspaceId}/settings`, icon: <Settings size={18} /> },
-  { title: "Members", href: `/workspace/${workspaceId}/members`, icon: <Users size={18} /> },
+  { title: "Members", href: `/workspace/${workspaceId}/member`, icon: <Users size={18} /> },
 ];
 
 

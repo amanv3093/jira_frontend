@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const publicRoutes = ["/sign-in", "/sign-up", "/reset-password"];
+const publicRoutes = ["/sign-in", "/sign-up", "/reset-password","/"];
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|public/).*)"],
@@ -16,7 +16,7 @@ const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET
   const isPublicRoute = publicRoutes.includes(pathname);
 
   if (token && isPublicRoute) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/workspace", request.url));
   }
 
   if (!token && !isPublicRoute) {
