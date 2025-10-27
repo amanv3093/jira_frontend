@@ -34,11 +34,11 @@ interface TaskFiltersProps {
     assignee: string[];
     search: string;
   }) => void;
-  project?: Project[];
+  project: Project[];
   members: Member[];
 }
 
-export default function TaskFilters({
+export default function ProjectFilters({
   onFilterChange,
   project,
   members,
@@ -213,7 +213,7 @@ export default function TaskFilters({
             </div>
 
             {project
-              .filter((p) =>
+              ?.filter((p) =>
                 p.name.toLowerCase().includes(localSearch.toLowerCase())
               )
               .map((p) => (
@@ -238,7 +238,7 @@ export default function TaskFilters({
                 </DropdownMenuItem>
               ))}
 
-            {project.filter((p) =>
+            {project?.filter((p) =>
               p.name.toLowerCase().includes(localSearch.toLowerCase())
             ).length === 0 && (
               <div className="flex justify-center items-center pt-1 gap-1">
@@ -385,7 +385,7 @@ export default function TaskFilters({
           align="start"
         >
           <DropdownMenuGroup>
-            {project && createProjectFilterSection()}
+            {createProjectFilterSection()}
 
             {createAssigneeFilterSection()}
             {createFilterSection(
@@ -406,18 +406,18 @@ export default function TaskFilters({
 
           <div className=" mt-4 px-1 border-t border-gray-200 pt-1">
             <div className="hover:bg-gray-100 flex items-center px-2 gap-2 w-fit rounded-sm">
-            <BrushCleaning size={14} />
-            <button
-              className="text-[12px] py-1 font-semibold"
-              onClick={() => {
-                setSelectedProjects([]);
-                setSelectedUsers([]);
-                setSelectedStatuses([]);
-                setSelectedPriorities([]);
-              }}
-            >
-              Clear All
-            </button>
+              <BrushCleaning size={14} />
+              <button
+                className="text-[12px] py-1 font-semibold"
+                onClick={() => {
+                  setSelectedProjects([]);
+                  setSelectedUsers([]);
+                  setSelectedStatuses([]);
+                  setSelectedPriorities([]);
+                }}
+              >
+                Clear All
+              </button>
             </div>
           </div>
         </DropdownMenuContent>

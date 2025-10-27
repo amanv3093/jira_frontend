@@ -30,6 +30,7 @@ interface Props {
   onClose: () => void;
   members: Member[];
   project: Project[];
+  projectAutoSelect?: Project;
 }
 
 export const TaskSchema = z.object({
@@ -53,7 +54,12 @@ export const TaskSchema = z.object({
 
 type TaskFormData = z.infer<typeof TaskSchema>;
 
-const TaskCreateModal = ({ onClose, members, project }: Props) => {
+const TaskCreateModal = ({
+  onClose,
+  members,
+  project,
+  projectAutoSelect,
+}: Props) => {
   const createTask = useCreateTask();
   const {
     register,
@@ -65,7 +71,7 @@ const TaskCreateModal = ({ onClose, members, project }: Props) => {
     resolver: zodResolver(TaskSchema),
     defaultValues: {
       task_name: "",
-      projectId: "",
+      projectId: projectAutoSelect ? projectAutoSelect?.id : "",
       status: TaskStatus.BACKLOG,
       priority: TaskPriority.MEDIUM,
       dueDate: undefined,
@@ -124,11 +130,20 @@ const TaskCreateModal = ({ onClose, members, project }: Props) => {
                   <SelectValue placeholder="Select project" />
                 </SelectTrigger>
                 <SelectContent>
-                  {project?.map((project) => (
-                    <SelectItem key={project.id} value={project.id}>
-                      {project.name}
+                  {projectAutoSelect ? (
+                    <SelectItem
+                      key={projectAutoSelect.id}
+                      value={projectAutoSelect.id}
+                    >
+                      {projectAutoSelect.name}
                     </SelectItem>
-                  ))}
+                  ) : (
+                    project?.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.name}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             )}

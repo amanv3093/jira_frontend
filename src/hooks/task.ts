@@ -63,3 +63,19 @@ export const useGetTaskByWorkspaceId = (id?: string, filters?: any) => {
     
   });
 };
+
+export const useGetTaskByProjectId = (id?: string, filters?: any) => {
+  return useQuery({
+    queryKey: ["getAllTaskByWorkspaceId", id,filters],
+    queryFn: async () => {
+      if (!id) return [];
+      const response = await taskService.getTaskByProjectId(id,filters);
+      return response.data;
+    },
+    enabled: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    placeholderData: keepPreviousData,
+    
+  });
+};

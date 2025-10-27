@@ -24,13 +24,9 @@ export const Columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "Project",
+    accessorKey: "projectId",
     header: "Project",
-    cell: ({ row }) => {
-      return <span>{row.original?.project?.name ?? "—"}</span>;
-    },
   },
-
   {
     accessorKey: "dueDate",
     header: "Due Date",
