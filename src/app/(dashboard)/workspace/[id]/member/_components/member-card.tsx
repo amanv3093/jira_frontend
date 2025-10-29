@@ -1,9 +1,21 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import Modal from "@/components/modal/custom-modal";
+import InvitePage from "./invite-modal";
+import { useGetMemberByWorkspaceId } from "@/hooks/member";
+import { useParams } from "next/navigation";
+import Loader from "@/app/Loader";
+import JoinPage from "./join-modal";
 
 // Sample member type
 type Member = {
@@ -16,17 +28,26 @@ type Member = {
   overdue?: number;
 };
 
-const members: Member[] = [
-  { id: "1", name: "Antoinette Martinez", role: "UI Designer", boards: 3, tasks: 24 },
-  { id: "2", name: "Chris Harris", role: "Front End", boards: 3, tasks: 24 },
-  { id: "3", name: "Victor Parker", role: "Full Stack", boards: 3, tasks: 24, avatar: "https://randomuser.me/api/portraits/men/32.jpg" },
-  { id: "4", name: "Nick Robins", role: "Net Developer", boards: 3, tasks: 24 },
-  { id: "5", name: "Sandra Osborne", role: "Team Leader", boards: 3, tasks: 24 },
-  { id: "6", name: "Tim Johnson", role: "Product Owner", boards: 3, tasks: 24 },
-  { id: "7", name: "Helen Coppola", role: "UI Designer", boards: 3, tasks: 24 },
-];
+
 
 export default function MemberCard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const onClose = () => setIsModalOpen(false);
+
+  const [isModalJoinOpen, setIsModalJoinOpen] = useState(false);
+  const onCloseJoin = () => setIsModalJoinOpen(false);
+
+  const params = useParams();
+  const workspaceId = params?.id as string;
+  const { data: members, isLoading } = useGetMemberByWorkspaceId(workspaceId);
+  console.log("member", members);
+  if (isLoading) {
+    return (
+      <div className="flex h-[70vh] items-center justify-center">
+        <Loader size={40} />
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="max-w-[1180px] mx-auto">
@@ -42,6 +63,22 @@ export default function MemberCard() {
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+           <div
+            className="flex items-center justify-center"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <button className="w-full max-w-[240px] h-40 border-2 border-dashed rounded-lg bg-white flex flex-col items-center justify-center text-sm text-slate-600">
+              + INVITE
+            </button>
+          </div>
+           <div
+            className="flex items-center justify-center"
+            onClick={() => setIsModalJoinOpen(true)}
+          >
+            <button className="w-full max-w-[240px] h-40 border-2 border-dashed rounded-lg bg-white flex flex-col items-center justify-center text-sm text-slate-600">
+              + Join
+            </button>
+          </div>
           {members.map((m) => (
             <Card key={m.id} className="relative overflow-visible">
               <CardContent className="p-4">
@@ -51,13 +88,21 @@ export default function MemberCard() {
                       {m.avatar ? (
                         <AvatarImage src={m.avatar} alt={m.name} />
                       ) : (
-                        <AvatarFallback>{m.name.split(" ").map(n => n[0]).slice(0,2).join("")}</AvatarFallback>
+                        <AvatarFallback>
+                          {m.user?.full_name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .slice(0, 2)
+                            .join("")}
+                        </AvatarFallback>
                       )}
                     </Avatar>
 
                     <div>
-                      <div className="font-medium text-sm">{m.name}</div>
-                      <div className="text-xs text-muted-foreground">{m.role}</div>
+                      <div className="font-medium text-sm">{m.user?.full_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {m.role}
+                      </div>
                     </div>
                   </div>
 
@@ -79,16 +124,18 @@ export default function MemberCard() {
 
                 <div className="mt-4 grid grid-cols-3 text-center">
                   <div>
-                    <div className="text-xs text-muted-foreground">Boards</div>
-                    <div className="font-semibold">{m.boards}</div>
+                    <div className="text-xs text-muted-foreground">Tasks</div>
+                    <div className="font-semibold">{m.stats.totalTasks}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground">Tasks</div>
-                    <div className="font-semibold">{m.tasks}</div>
+                    <div className="text-xs text-muted-foreground">Completed</div>
+                    <div className="font-semibold">{m.stats.completedTasks}</div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Overdue</div>
-                    <div className="font-semibold text-rose-500">{m.overdue ?? 0}</div>
+                    <div className="font-semibold text-rose-500">
+                      {m.stats.overdueTasks}
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -96,13 +143,19 @@ export default function MemberCard() {
           ))}
 
           {/* Invite card */}
-          <div className="flex items-center justify-center">
-            <button className="w-full max-w-[240px] h-40 border-2 border-dashed rounded-lg bg-white flex flex-col items-center justify-center text-sm text-slate-600">
-              + INVITE
-            </button>
-          </div>
+         
         </div>
       </div>
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={onClose}>
+          <InvitePage onClose={onClose} />
+        </Modal>
+      )}
+      {isModalJoinOpen && (
+        <Modal isOpen={isModalJoinOpen} onClose={onCloseJoin}>
+          <JoinPage onClose={onCloseJoin} />
+        </Modal>
+      )}
     </div>
   );
 }
