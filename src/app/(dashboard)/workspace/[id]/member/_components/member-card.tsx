@@ -79,7 +79,7 @@ export default function MemberCard() {
               + Join
             </button>
           </div>
-          {members.map((m) => (
+          {members?.map((m) => (
             <Card key={m.id} className="relative overflow-visible">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">

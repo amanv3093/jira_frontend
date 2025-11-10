@@ -14,37 +14,39 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
-  const pathname = usePathname(); // current URL
-  const [isCollapsed, setIsCollapsed] = useIsCollapsed();
+    const [isCollapsed, setIsCollapsed] = useIsCollapsed();
 
-  const { data: workspaces, isLoading: workspacesLoading } = useGetAllWorkspace();
+  // const router = useRouter();
+  // const pathname = usePathname(); 
 
-  useEffect(() => {
-    if (!workspacesLoading && workspaces) {
-      // No workspaces → redirect to create
-      if (workspaces.length === 0) {
-        if (pathname !== "/workspace/create") {
-          router.replace("/workspace/create");
-        }
-      } else {
-        // At least one workspace exists
-        const firstWorkspacePath = `/workspace/${workspaces[0].id}`;
-        // Redirect only if not already on a workspace page
-        if (!pathname.startsWith("/workspace/")) {
-          router.replace(firstWorkspacePath);
-        }
-      }
-    }
-  }, [workspacesLoading, workspaces, pathname, router]);
 
-  if (workspacesLoading) {
-    return (
-      <div className="flex h-[70vh] items-center justify-center">
-        <Loader size={40} />
-      </div>
-    );
-  }
+  // const { data: workspaces, isLoading: workspacesLoading } = useGetAllWorkspace();
+
+  // useEffect(() => {
+  //   if (!workspacesLoading && workspaces) {
+     
+  //     if (workspaces.length === 0) {
+  //       if (pathname !== "/workspace/create") {
+  //         router.replace("/workspace/create");
+  //       }
+  //     } else {
+       
+  //       const firstWorkspacePath = `/workspace/${workspaces[0].id}`;
+       
+  //       if (!pathname.startsWith("/workspace/")) {
+  //         router.replace(firstWorkspacePath);
+  //       }
+  //     }
+  //   }
+  // }, [workspacesLoading, workspaces, pathname, router]);
+
+  // if (workspacesLoading) {
+  //   return (
+  //     <div className="flex h-[70vh] items-center justify-center">
+  //       <Loader size={40} />
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="relative h-full overflow-hidden bg-background">
