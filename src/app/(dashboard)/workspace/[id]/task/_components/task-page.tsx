@@ -22,7 +22,7 @@ import {
 function TaskPage() {
   const params = useParams();
   const workspaceId = params?.id as string;
-  const [viewMode, setViewMode] = useState("table");
+  const [viewMode, setViewMode] = useState("kanban");
   const [filters, setFilters] = useState({
     status: [] as string[],
     priority: [] as string[],

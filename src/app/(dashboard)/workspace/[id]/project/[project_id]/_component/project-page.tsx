@@ -28,7 +28,7 @@ function ProjectPage() {
   const projectId = params?.project_id as string;
   const { data: project, isLoading } = useGetProjectById(projectId);
   console.log(project);
-   const [viewMode, setViewMode] = useState("table");
+   const [viewMode, setViewMode] = useState("kanban");
     const [isModalOpen, setIsModalOpen] = useState(false);
      const onClose = () => setIsModalOpen(false);
 

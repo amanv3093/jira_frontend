@@ -79,3 +79,24 @@ export const useGetTaskByProjectId = (id?: string, filters?: any) => {
     
   });
 };
+
+export const useUpdateTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: any }) => {
+      return await taskService.updateTask(id, payload);
+    },
+    onSuccess: (data) => {
+      toast.success("Task updated successfully");
+      // Invalidate cached task data so UI refreshes
+      queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
+      queryClient.invalidateQueries({ queryKey: ["getAllTaskByProjectId"] });
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.error || "Failed to update Task";
+      toast.error(message);
+    },
+  });
+};
