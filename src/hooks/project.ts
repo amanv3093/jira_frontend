@@ -22,12 +22,12 @@ export const useCreateProject = () => {
   return useMutation({
     mutationFn: async (formData: FormData) => {
       const response = await projectService.createProject(formData);
-      return response.data!;
+      return response.data;
     },
     onSuccess: (project: Project) => {
       toast.success("Project created successfully");
-      queryClient.invalidateQueries({ queryKey: ["getAllProject"] });
 
+      queryClient.invalidateQueries({ queryKey: ["getAllProject"] });
       queryClient.invalidateQueries({
         queryKey: ["getWorkspaceById", project.workspaceId],
       });
@@ -39,6 +39,7 @@ export const useCreateProject = () => {
     },
   });
 };
+
 
 export const useGetAllProject = () => {
   return useQuery({

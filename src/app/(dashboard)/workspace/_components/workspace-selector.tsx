@@ -60,9 +60,9 @@ const WorkspaceSelector = ({ workspaces, onSelect }: Props) => {
                     <Image
                       src={ws.profilePic || "/default-avatar.png"}
                       alt={ws.name}
-                      width={24}
-                      height={24}
-                      className="rounded-full object-cover"
+                      width={20}
+                      height={20}
+                      className="rounded-md h-[20px] w-[20px] object-cover"
                     />
                   ) : (
                     <div className="bg-blue-700 rounded-md text-white h-[20px] w-[20px] flex items-center justify-center">

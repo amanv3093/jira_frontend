@@ -1,5 +1,7 @@
-import { fetchHandler } from "@/lib/api-utils";
+import { fetchHandler, fetchHandlerWithFormData } from "@/lib/api-utils";
 import { ApiResponse, Project } from "@/types";
+import axios from "axios";
+import { getSession } from "next-auth/react";
 
 const PROJECT_API = {
   POST: "project",
@@ -9,8 +11,8 @@ const PROJECT_API = {
 } as const;
 
 export const projectService = {
-  createProject: (payload: FormData) =>
-    fetchHandler<ApiResponse<Project>>(PROJECT_API.POST, "POST", payload),
+  createProject: (formData: FormData) =>
+    fetchHandlerWithFormData<ApiResponse>(PROJECT_API.POST, "POST", formData),
   getAllProject: () => fetchHandler<ApiResponse>(PROJECT_API.GET, "GET"),
   getProjectById: (id: string) =>
     fetchHandler<ApiResponse>(PROJECT_API.GET_BY_ID(id), "GET"),

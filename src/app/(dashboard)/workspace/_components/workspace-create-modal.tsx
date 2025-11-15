@@ -45,7 +45,7 @@ const WorkspaceCreateModal = ({ onClose }: Props) => {
     const formData = new FormData();
     formData.append("name", data.name);
     if (data.image) {
-      formData.append("image", data.image);
+      formData.append("profilePic", data.image);
     }
 
     createWorkspace.mutate(formData, {

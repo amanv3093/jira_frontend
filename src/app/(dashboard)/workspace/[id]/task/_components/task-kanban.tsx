@@ -147,12 +147,13 @@ export default function TaskKanban({ data, onPersist }: TaskKanbanProps) {
                   </span>
                 </div>
 
-                <div className="space-y-2 overflow-y-auto max-h-[70vh] p-1">
+                <div className="space-y-2 overflow-y-auto max-h-[70vh] p-1 cursor-default">
                   {tasks.map((task, index) => (
                     <Draggable
                       draggableId={task.id}
                       index={index}
                       key={task.id}
+                      
                     >
                       {(dragProvided, dragSnapshot) => {
                         const [hovered, setHovered] = useState(false);
@@ -173,7 +174,7 @@ export default function TaskKanban({ data, onPersist }: TaskKanbanProps) {
                             ref={dragProvided.innerRef}
                             {...dragProvided.draggableProps}
                             {...dragProvided.dragHandleProps}
-                            className={`mb-2 relative ${
+                            className={`mb-2 relative !cursor-pointer ${
                               dragSnapshot.isDragging ? "z-50" : ""
                             }`}
                             onMouseEnter={() => setHovered(true)}

@@ -202,7 +202,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
             navOpened ? "max-h-full" : "max-h-0 py-0 md:max-h-full md:py-2"
           )}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-1">
             <h1>Projects</h1>
             <div
               className="bg-gray-100 rounded-md p-1 cursor-pointer"
@@ -218,16 +218,31 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
                 const isActive = pathname === projectUrl;
 
                 return (
-                  <li key={project.id}>
-                    <Link
-                      href={projectUrl}
-                      className={cn(
-                        "block px-2 py-1 rounded hover:bg-gray-200",
-                        isActive && "bg-gray-200 font-medium"
-                      )}
-                    >
-                      {project.name}
-                    </Link>
+                  <li
+                    key={project.id}
+                    className={`flex items-center gap-2 cursor-pointer ${cn(
+                      "block px-2 py-1 rounded hover:bg-gray-200",
+                      isActive && "bg-gray-200 font-medium"
+                    )}`}
+                  >
+                    {project?.profilePic ? (
+                      <Image
+                        src={project.profilePic}
+                        alt={project.name || "Profile picture"}
+                        width={20}
+                        height={20}
+                        className="rounded-md h-[20px] w-[20px] object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = "/default-avatar.png";
+                        }}
+                      />
+                    ) : (
+                      <div className="bg-blue-700 rounded-md text-white h-[20px] w-[20px] flex items-center justify-center">
+                        {project.name?.slice(0, 1)}
+                      </div>
+                    )}
+
+                    <Link href={projectUrl}>{project.name}</Link>
                   </li>
                 );
               })

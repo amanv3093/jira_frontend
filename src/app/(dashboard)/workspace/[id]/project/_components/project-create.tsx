@@ -24,7 +24,11 @@ const ProjectSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().optional(),
   workspaceId: z.string().min(1, "Select a workspace"),
-  profilePic: z.any().optional(),
+  profilePic: z
+    .custom<File>((file) => file instanceof File, {
+      message: "Profile picture is required",
+    })
+
 });
 
 export type ProjectFormValues = z.infer<typeof ProjectSchema>;
@@ -74,6 +78,8 @@ export default function ProjectCreateForm({
       formData.append("name", values.name);
       formData.append("description", values.description || "");
       formData.append("workspaceId", values.workspaceId);
+
+      console.log("values",values)
       if (values.profilePic instanceof File) {
         formData.append("profilePic", values.profilePic);
       }
@@ -99,7 +105,7 @@ export default function ProjectCreateForm({
           <CardTitle className="text-2xl">Create Project</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)}  encType="multipart/form-data" className="space-y-6">
             {/* Project Name */}
             <div>
               <label className="block text-sm font-medium mb-1">

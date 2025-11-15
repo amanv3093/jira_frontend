@@ -41,7 +41,10 @@ export const useCreateWorkspace = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: workspaceService.createWorkspace,
+    mutationFn: async (formData: FormData) => {
+      const response = await workspaceService.createWorkspace(formData);
+      return response.data;
+    },
     onSuccess: (data) => {
       toast.success("Workspace created successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllWorkspace"] });
