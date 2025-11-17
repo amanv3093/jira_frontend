@@ -48,7 +48,11 @@ export const useGetMemberByWorkspaceId = (
       const response = await memberService.getMemberByWorkspaceId(id);
       return response.data;
     },
-    enabled: !!id, 
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false, 
     ...options,
   });
 };
