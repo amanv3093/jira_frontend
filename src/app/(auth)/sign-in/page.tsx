@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,10 @@ const SignInForm = () => {
   const toast = useCustomToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/workspace";
+
+
 
   const {
     register,
@@ -68,7 +72,7 @@ const SignInForm = () => {
       } else if (result?.ok) {
         console.log("Not Error");
         toast.success({ message: "Logged in successfully!" });
-      router.push("/workspace", { scroll: false });
+      router.push(callbackUrl , { scroll: false });
 
       }
     } catch (error) {
@@ -158,7 +162,7 @@ const SignInForm = () => {
 
                 {/* Optional: Links */}
                 <div className="flex justify-between text-sm text-gray-500 mt-2">
-                  <Link href="/sign-up">Create account</Link>
+                  <Link href={`/sign-up?${searchParams.toString()}`}>Create account</Link>
                   <Link href="/auth/forgot-password">Forgot password?</Link>
                 </div>
               </form>

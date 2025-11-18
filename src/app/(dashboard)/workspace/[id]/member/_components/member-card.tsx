@@ -85,11 +85,11 @@ export default function MemberCard() {
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-3">
                     <Avatar>
-                      {m.avatar ? (
-                        <AvatarImage src={m.avatar} alt={m.name} />
+                      {m?.avatar ? (
+                        <AvatarImage src={m?.avatar} alt={m?.name} />
                       ) : (
                         <AvatarFallback>
-                          {m.user?.full_name
+                          {m?.user?.full_name
                             .split(" ")
                             .map((n) => n[0])
                             .slice(0, 2)
@@ -101,7 +101,7 @@ export default function MemberCard() {
                     <div>
                       <div className="font-medium text-sm">{m.user?.full_name}</div>
                       <div className="text-xs text-muted-foreground">
-                        {m.role}
+                        {m?.role}
                       </div>
                     </div>
                   </div>
@@ -125,16 +125,16 @@ export default function MemberCard() {
                 <div className="mt-4 grid grid-cols-3 text-center">
                   <div>
                     <div className="text-xs text-muted-foreground">Tasks</div>
-                    <div className="font-semibold">{m.stats.totalTasks}</div>
+                    <div className="font-semibold">{m?.stats?.totalTasks}</div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Completed</div>
-                    <div className="font-semibold">{m.stats.completedTasks}</div>
+                    <div className="font-semibold">{m?.stats?.completedTasks}</div>
                   </div>
                   <div>
                     <div className="text-xs text-muted-foreground">Overdue</div>
                     <div className="font-semibold text-rose-500">
-                      {m.stats.overdueTasks}
+                      {m?.stats?.overdueTasks}
                     </div>
                   </div>
                 </div>

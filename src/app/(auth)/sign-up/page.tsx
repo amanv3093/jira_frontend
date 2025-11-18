@@ -9,7 +9,7 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signup } from "@/services/auth/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 const signupSchema = z.object({
@@ -22,7 +22,7 @@ const signupSchema = z.object({
 type SignupFormData = z.infer<typeof signupSchema>;
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
-
+   const searchParams = useSearchParams();
   const {
     register,
     handleSubmit,
@@ -37,7 +37,7 @@ function SignUp() {
       const response = await signup(data);
       if (response?.success || response?.status === 201) {
         console.log("Signup successful:", response);
-        router.push("/signin");
+        router.push(`/sign-in?${searchParams.toString()}`);
       } else {
         console.log(response)
         console.error("Signup failed:", response);
@@ -150,7 +150,7 @@ function SignUp() {
                 </Button>
               </form>
               <div className="flex justify-between text-sm text-gray-500 mt-2">
-                <Link href="/sign-in">Already have an account? Log in</Link>
+                <Link href={`/sign-in?${searchParams.toString()}`}>Already have an account? Log in</Link>
               </div>
             </div>
           </div>

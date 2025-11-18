@@ -92,7 +92,7 @@ export default function InvitePage({ onClose }: InviteProp) {
       const session = await getSession();
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/member/invite-many`,
+        `${process.env.NEXT_PUBLIC_API_URL}/member/invite`,
         {
           method: "POST",
           headers: {

@@ -1,156 +1,73 @@
-// "use client";
-
-// import { useGetWorkspaceById } from "@/hooks/workspace";
-// import { useParams } from "next/navigation";
-// import React from "react";
-// import TaskStatsCards from "../project/[project_id]/_component/task-stats-card";
-
-// function WorkspacePage() {
-//   const params = useParams();
-//   const workspaceId = params?.id as string;
-//   // const { data: workspaceData } = useGetWorkspaceById(workspaceId);
-//   // console.log("workspaceData", workspaceData);
-//   return (
-//     <div>
-//       <p>WorkspacePage</p>
-
-//       <TaskStatsCards />
-//     </div>
-//   );
-// }
-
-// export default WorkspacePage;
-"use client";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FiPlus, FiSearch } from "react-icons/fi";
-
-interface Task {
-  id: string;
-  title: string;
-  due: string;
-  status: "todo" | "in-progress" | "done";
-}
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-}
-
-export default function WorkspacePage() {
-  const { id } = useParams();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  useEffect(() => {
-    setTasks([
-      { id: "t1", title: "Create UI System", due: "Today", status: "in-progress" },
-      { id: "t2", title: "Fix Auth bugs", due: "Tomorrow", status: "todo" },
-      { id: "t3", title: "Deploy API Server", due: "Next week", status: "done" },
-    ]);
-
-    setProjects([
-      { id: "p1", title: "Platform Engine", description: "Core backend services" },
-      { id: "p2", title: "Dashboard UI", description: "Front UI revamp" },
-      { id: "p3", title: "Notification System", description: "Alerts + automation" },
-    ]);
-  }, []);
-
-  const statusColor = {
-    todo: "bg-gray-200 text-gray-600",
-    "in-progress": "bg-indigo-200 text-indigo-700",
-    done: "bg-green-200 text-green-700",
-  };
-
+export default function Dashboard() {
   return (
-    <div className="flex h-screen bg-gray-50">
-      
-      {/* Sidebar */}
-    
+    <div className="p-8 space-y-8">
+      {/* Title */}
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-gray-500 mt-1">
+          Plan, prioritize, and accomplish your tasks with ease.
+        </p>
+      </div>
 
-      {/* Main */}
-      <main className="flex-1 p-8 space-y-10">
-        
-        {/* Top bar */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-semibold">Welcome Back 👋</h2>
-            <p className="text-gray-500 text-sm mt-1">
-              Workspace ID: <span className="text-blue-600">{id}</span>
-            </p>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: "Total Projects", value: 24 },
+          { label: "Ended Projects", value: 10 },
+          { label: "Running Projects", value: 12 },
+          { label: "Pending Projects", value: 2 },
+        ].map((card) => (
+          <div key={card.label} className="bg-green-700 text-white p-6 rounded-xl shadow-sm">
+            <p className=" text-sm">{card.label}</p>
+            <h3 className="text-3xl font-bold mt-2">{card.value}</h3>
           </div>
+        ))}
+      </div>
 
-          <div className="flex gap-3 items-center">
-            <div className="bg-white flex items-center gap-2 border rounded-lg px-3 py-2">
-              <FiSearch className="text-gray-500" />
-              <input placeholder="Search…" className="outline-none text-sm" />
-            </div>
+      {/* Project Analytics Placeholder */}
+      <div className="bg-white p-6 rounded-xl shadow-sm">
+        <h3 className="font-semibold mb-3">Project Analytics</h3>
+        <div className="h-32 bg-gray-100 rounded-lg" />
+      </div>
 
-            <button className="bg-black text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-              <FiPlus /> New Task
-            </button>
+      {/* Lower Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Team Collaboration */}
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <h3 className="font-semibold mb-4">Team Collaboration</h3>
+          <div className="space-y-3">
+            {["Alexandra", "Edwin", "Issaq", "David"].map((name) => (
+              <div key={name} className="p-3 bg-gray-100 rounded-lg">
+                <p className="font-medium">{name}</p>
+                <p className="text-xs text-gray-500">Working on project...</p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-5">
-          {[
-            { label: "Tasks", value: tasks.length },
-            { label: "In Progress", value: tasks.filter(t=>t.status==="in-progress").length },
-            { label: "Completed", value: tasks.filter(t=>t.status==="done").length },
-          ].map((stat, i) => (
-            <div key={i} className="bg-white p-6 rounded-xl shadow-sm border">
-              <p className="text-gray-500 text-sm">{stat.label}</p>
-              <p className="text-3xl font-bold mt-2">{stat.value}</p>
-            </div>
-          ))}
+        {/* Project Progress */}
+        <div className="bg-white p-6 rounded-xl shadow-sm">
+          <h3 className="font-semibold mb-4">Project Progress</h3>
+          <div className="h-40 flex flex-col items-center justify-center">
+            <span className="text-4xl font-bold">41%</span>
+            <p className="text-gray-500 text-sm">Project Completed</p>
+          </div>
         </div>
 
-        {/* Projects & Tasks */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          
-          {/* Projects */}
-          <div>
-            <div className="flex justify-between mb-3">
-              <h3 className="font-semibold text-lg">Projects</h3>
-              <button className="text-indigo-600 text-sm">+ Add</button>
-            </div>
-
-            <div className="space-y-4">
-              {projects.map((p) => (
-                <div key={p.id} className="bg-white p-5 rounded-xl border shadow-sm hover:shadow-lg transition cursor-pointer">
-                  <h4 className="font-semibold text-base">{p.title}</h4>
-                  <p className="text-gray-500 text-sm mt-1">{p.description}</p>
-                </div>
-              ))}
-            </div>
+        {/* Time Tracker */}
+        <div className="bg-green-700 text-white p-6 rounded-xl shadow-lg flex flex-col justify-between">
+          <div className="text-center">
+            <h4 className="font-semibold">Time Tracker</h4>
+            <p className="text-3xl mt-4 font-mono">01:24:08</p>
           </div>
 
-          {/* Tasks */}
-          <div>
-            <div className="flex justify-between mb-3">
-              <h3 className="font-semibold text-lg">Recent Tasks</h3>
-            </div>
-
-            <div className="space-y-4">
-              {tasks.map((task) => (
-                <div key={task.id} className="bg-white p-4 rounded-xl shadow-sm border flex justify-between">
-                  <div>
-                    <p className="font-medium">{task.title}</p>
-                    <p className="text-sm text-gray-400">{task.due}</p>
-                  </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${statusColor[task.status]}`}>
-                    {task.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+          <div className="flex items-center justify-center gap-4">
+            <button className="h-10 w-10 bg-white/20 rounded-full"></button>
+            <button className="h-10 w-10 bg-white rounded-full"></button>
+            <button className="h-10 w-10 bg-white/20 rounded-full"></button>
           </div>
-
         </div>
-
-      </main>
+      </div>
     </div>
   );
 }
