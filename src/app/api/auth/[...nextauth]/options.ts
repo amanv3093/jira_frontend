@@ -10,6 +10,9 @@ interface CustomUser extends User {
   role: string;
   token: string;
   refreshToken: string;
+  session :{
+    user: User;
+  }
 }
 
 export const authOptions: NextAuthOptions = {
@@ -49,7 +52,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user = token.user as CustomUser;
+      session.user = token.user as any;
       return session;
     },
   },

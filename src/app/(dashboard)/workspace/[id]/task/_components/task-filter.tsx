@@ -212,8 +212,7 @@ export default function TaskFilters({
               />
             </div>
 
-            {project
-              .filter((p) =>
+            {project?.filter((p) =>
                 p.name.toLowerCase().includes(localSearch.toLowerCase())
               )
               .map((p) => (
@@ -238,7 +237,7 @@ export default function TaskFilters({
                 </DropdownMenuItem>
               ))}
 
-            {project.filter((p) =>
+            {project?.filter((p) =>
               p.name.toLowerCase().includes(localSearch.toLowerCase())
             ).length === 0 && (
               <div className="flex justify-center items-center pt-1 gap-1">

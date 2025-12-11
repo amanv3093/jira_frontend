@@ -41,42 +41,40 @@ export const useCreateTask = () => {
       toast.success("Task created successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message =
-        error?.response?.data?.error || "Failed to create Task";
+        error instanceof Error ? error.message : "Failed to create Task";
       toast.error(message);
     },
   });
 };
 export const useGetTaskByWorkspaceId = (id?: string, filters?: any) => {
   return useQuery({
-    queryKey: ["getAllTaskByWorkspaceId", id,filters],
+    queryKey: ["getAllTaskByWorkspaceId", id, filters],
     queryFn: async () => {
       if (!id) return [];
-      const response = await taskService.getTaskByWorkspaceId(id,filters);
+      const response = await taskService.getTaskByWorkspaceId(id, filters);
       return response.data;
     },
     enabled: true,
     refetchOnWindowFocus: false,
     staleTime: 0,
     placeholderData: keepPreviousData,
-    
   });
 };
 
 export const useGetTaskByProjectId = (id?: string, filters?: any) => {
   return useQuery({
-    queryKey: ["getAllTaskByWorkspaceId", id,filters],
+    queryKey: ["getAllTaskByWorkspaceId", id, filters],
     queryFn: async () => {
       if (!id) return [];
-      const response = await taskService.getTaskByProjectId(id,filters);
+      const response = await taskService.getTaskByProjectId(id, filters);
       return response.data;
     },
     enabled: true,
     refetchOnWindowFocus: false,
     staleTime: 0,
     placeholderData: keepPreviousData,
-    
   });
 };
 
@@ -87,15 +85,15 @@ export const useUpdateTask = () => {
     mutationFn: async ({ id, payload }: { id: string; payload: any }) => {
       return await taskService.updateTask(id, payload);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Task updated successfully");
       // Invalidate cached task data so UI refreshes
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByProjectId"] });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       const message =
-        error?.response?.data?.error || "Failed to update Task";
+        error instanceof Error ? error.message : "Failed to update Task";
       toast.error(message);
     },
   });

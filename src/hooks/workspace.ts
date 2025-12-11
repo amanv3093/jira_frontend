@@ -4,12 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useCustomToast } from "@/components/providers/toaster-provider";
 
-import {
-  handleMutationSuccess,
-  handleMutationError,
-} from "@/lib/mutation-utils";
 import { workspaceService } from "@/services/workspace";
 import { toast } from "sonner";
 
@@ -45,13 +40,13 @@ export const useCreateWorkspace = () => {
       const response = await workspaceService.createWorkspace(formData);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Workspace created successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllWorkspace"] });
     },
-    onError: (error: any) => {
+    onError: (err: unknown) => {
       const message =
-        error?.response?.data?.error || "Failed to create project";
+        err instanceof Error ? err.message : "Failed to create project";
       toast.error(message);
     },
   });

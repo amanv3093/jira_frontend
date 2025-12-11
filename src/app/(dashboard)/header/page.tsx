@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users2, UserCog, UserCheck, LogOut, Sun, Moon } from "lucide-react";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {  UserCog, UserCheck, LogOut, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 // import Profile from "./_components/profile";
 // import ManageProjectDashboard from "../(managment)/manage-project/[id]/dashboard/_components/manage-project-dashboard";
 
 const Header = () => {
-  const pathname = usePathname();
-  const isProjectPage = pathname.includes("/manage-project");
+  // const pathname = usePathname();
+  // const isProjectPage = pathname.includes("/manage-project");
   const [open, setOpen] = React.useState(false);
 
   const [isDark, setIsDark] = React.useState(

@@ -27,7 +27,7 @@ export enum TaskPriority {
 export interface Task {
   id: string;
   task_name: string;
-  status?: TaskStatus;
+  status: TaskStatus;
   priority?: TaskPriority;
   dueDate?: string | null;
   projectId: string;
@@ -35,6 +35,7 @@ export interface Task {
     userId: string;
     assignedAt?: string;
   }[];
+  project:Project
 }
 
 export enum MemberRole {
@@ -70,11 +71,19 @@ export interface Member {
   joinedAt: string;
   workspaceId: string;
   projectId?: string | null;
+  avatar?: string | null;
+  name?: string;
+  email?: string;
   user: User;
+  stats:{
+    totalTasks: number;
+    completedTasks: number;
+    overdueTasks: number;
+  }
 }
 
 export interface Project {
-  id?: string;
+  id: string;
   name: string;
   description?: string;
   profilePic?: string | null;

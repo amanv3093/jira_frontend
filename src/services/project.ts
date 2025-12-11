@@ -1,7 +1,6 @@
 import { fetchHandler, fetchHandlerWithFormData } from "@/lib/api-utils";
-import { ApiResponse, Project } from "@/types";
-import axios from "axios";
-import { getSession } from "next-auth/react";
+import { ApiResponse } from "@/types";
+
 
 const PROJECT_API = {
   POST: "project",

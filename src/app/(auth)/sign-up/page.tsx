@@ -42,7 +42,7 @@ function SignUp() {
         console.log(response)
         console.error("Signup failed:", response);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle errors from the API
       console.error("Signup failed:", error);
     }

@@ -148,7 +148,7 @@ function ProjectPage() {
         <Modal isOpen={isModalOpen} onClose={onClose}>
           <TaskCreateModal
             onClose={onClose}
-            members={project?.members}
+            members={project.members}
             projectAutoSelect={project}
           />
         </Modal>

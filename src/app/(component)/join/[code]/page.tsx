@@ -5,17 +5,25 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Loader2, X } from "lucide-react";
+import { Loader2} from "lucide-react";
 import { toast } from "sonner";
 import { getSession } from "next-auth/react";
 
+type InviteInfo = {
+  workspace?: {
+    name: string;
+  };
+  project?: {
+    name: string;
+  };
+};
 
 export default function JoinPage() {
    const inviteCode = useParams()
   console.log(inviteCode)
 
   const [loading, setLoading] = useState(false);
-  const [inviteInfo, setInviteInfo] = useState<any>(null);
+  const [inviteInfo, setInviteInfo] = useState<InviteInfo | null>(null);
   const [isValid, setIsValid] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [manualToken, setManualToken] = useState(inviteCode.code);
@@ -29,7 +37,7 @@ export default function JoinPage() {
 
   useEffect(() => {
     if (urlToken) {
-      setTokenSource("link");
+      // setTokenSource("link");
       verifyInvite(urlToken);
     }
   }, [urlToken]);
@@ -133,7 +141,7 @@ export default function JoinPage() {
               </div>
 
               <Button
-                 onClick={() => handleJoin(manualToken)}
+                 onClick={() => handleJoin(manualToken as string)}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-2"
               >
@@ -165,7 +173,7 @@ export default function JoinPage() {
               <div className="flex flex-col gap-3">
                 <Button
                   variant="secondary"
-                  onClick={() => verifyInvite(manualToken)}
+                  onClick={() => verifyInvite(manualToken as string)}
                   disabled={!manualToken}
                   className="w-full"
                 >
@@ -174,7 +182,7 @@ export default function JoinPage() {
 
                 {isValid && (
                   <Button
-                    onClick={() => handleJoin(manualToken)}
+                    onClick={() => handleJoin(manualToken as string)}
                     disabled={loading}
                     className="w-full flex items-center justify-center gap-2"
                   >

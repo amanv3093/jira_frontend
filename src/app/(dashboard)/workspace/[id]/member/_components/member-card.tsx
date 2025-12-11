@@ -16,17 +16,18 @@ import { useGetMemberByWorkspaceId } from "@/hooks/member";
 import { useParams } from "next/navigation";
 import Loader from "@/app/Loader";
 import JoinPage from "./join-modal";
+import { Member } from "@/types";
 
 // Sample member type
-type Member = {
-  id: string;
-  name: string;
-  role: string;
-  avatar?: string;
-  boards: number;
-  tasks: number;
-  overdue?: number;
-};
+// type Member = {
+//   id: string;
+//   name: string;
+//   role: string;
+//   avatar?: string;
+//   boards: number;
+//   tasks: number;
+//   overdue?: number;
+// };
 
 
 

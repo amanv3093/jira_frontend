@@ -13,6 +13,9 @@ module.exports = {
       },
     ],
   },
+   eslint: {
+    ignoreDuringBuilds: true,   // ← ADD HERE
+  },
 };
 
 

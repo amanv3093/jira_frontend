@@ -34,6 +34,11 @@ type InviteRow = {
 interface InviteProp {
   onClose: () => void;
 }
+type Project = {
+  id?: string;
+  name?: string;
+};
+
 
 export default function InvitePage({ onClose }: InviteProp) {
   const [rows, setRows] = useState<InviteRow[]>([
@@ -115,8 +120,10 @@ export default function InvitePage({ onClose }: InviteProp) {
 
       toast.success("Invites sent!");
       setRows([{ id: 1, email: "", role: "member" }]);
-    } catch (err: any) {
-      toast.error(err.message || "Error sending invite");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Error sending invite";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -157,7 +164,7 @@ export default function InvitePage({ onClose }: InviteProp) {
           <SelectContent>
             {!projectsLoading &&
               projects?.map((project: any) => (
-                <SelectItem key={project.id} value={project.id}>
+                <SelectItem key={project.id} value={project?.id}>
                   {project.name}
                 </SelectItem>
               ))}

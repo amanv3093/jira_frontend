@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { forgetPassword } from "@/services/auth/auth";
+// import { forgetPassword } from "@/services/auth/auth";
 
 const formSchema = z.object({
   email_address: z.string().email("Please enter a valid email address"),
@@ -35,23 +35,23 @@ export default function ForgetPassword() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setIsLoading(true);
-      const response = await forgetPassword(values.email_address);
+    // try {
+    //   setIsLoading(true);
+    //   const response = await forgetPassword(values.email_address);
 
-      if (response.success) {
-        toast.success({
-          message: "Reset password link has been sent to your email",
-        });
-        router.push("/sign-in");
-      } else {
-        toast.error({ message: response.message });
-      }
-    } catch {
-      toast.error({ message: "Something went wrong. Please try again." });
-    } finally {
-      setIsLoading(false);
-    }
+    //   if (response.success) {
+    //     toast.success({
+    //       message: "Reset password link has been sent to your email",
+    //     });
+    //     router.push("/sign-in");
+    //   } else {
+    //     toast.error({ message: response.message });
+    //   }
+    // } catch {
+    //   toast.error({ message: "Something went wrong. Please try again." });
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   return (

@@ -4,7 +4,7 @@ import { useGetAllWorkspace } from "@/hooks/workspace";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
-function page() {
+function Page() {
   const router = useRouter();
   const { data: workspaces, isLoading: workspacesLoading } =
     useGetAllWorkspace();
@@ -17,7 +17,7 @@ function page() {
       }
     }
 
-  }, [workspacesLoading, workspaces]);
+  }, [workspacesLoading, workspaces,router]);
   if (workspacesLoading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">
@@ -27,4 +27,4 @@ function page() {
   }
 }
 
-export default page;
+export default Page;

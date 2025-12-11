@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import * as z from "zod";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+// import { AnimatePresence, motion } from "framer-motion";
 // Define Zod schema for validation
 const signInSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -22,11 +22,7 @@ const signInSchema = z.object({
 
 type SignInFormData = z.infer<typeof signInSchema>;
 
-const images = [
-  "/premium_photo-1667587246381-49a4f3daab71.avif",
-  "/photo-1616024088876-6a83436b7956.avif",
-  "/photo-1587719425076-f770d7039908.avif",
-];
+
 
 const SignInForm = () => {
   const router = useRouter();

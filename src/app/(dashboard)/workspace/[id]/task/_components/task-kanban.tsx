@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Task } from "@/types";
+import { Task, TaskStatus } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axiosInstance from "@/lib/axiosInstance"; // ✅ Import your configured axios instance
@@ -102,14 +102,14 @@ export default function TaskKanban({ data, onPersist }: TaskKanbanProps) {
     newCols[sourceColIdx] = { ...columns[sourceColIdx], tasks: newSourceTasks };
     newCols[destColIdx] = { ...columns[destColIdx], tasks: newDestTasks };
 
-    const movedWithStatus = { ...moved, status: newCols[destColIdx].key };
+    const movedWithStatus = { ...moved, status: newCols[destColIdx].key as TaskStatus  };
     newCols[destColIdx].tasks[destination.index] = movedWithStatus;
     setColumns(newCols);
 
     // ✅ Persist change
     try {
       if (onPersist) {
-        await onPersist(moved.id, { status: newCols[destColIdx].key });
+        await onPersist(moved.id, { status: newCols[destColIdx].key as TaskStatus });
       } else {
         updateTask({
           id: moved.id,

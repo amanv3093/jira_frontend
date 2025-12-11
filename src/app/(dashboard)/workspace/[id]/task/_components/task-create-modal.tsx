@@ -29,7 +29,7 @@ import { useCreateTask } from "@/hooks/task";
 interface Props {
   onClose: () => void;
   members: Member[];
-  project: Project[];
+  project?: Project[];
   projectAutoSelect?: Project;
 }
 
@@ -38,13 +38,10 @@ export const TaskSchema = z.object({
   status: z.nativeEnum(TaskStatus),
   priority: z.nativeEnum(TaskPriority),
   dueDate: z
-    .preprocess((val) => {
-      if (typeof val === "string" && val.trim() !== "") {
-        return new Date(val).toISOString();
-      }
-      return val;
-    }, z.string().datetime("Invalid datetime"))
-    .refine((val) => !!val, { message: "Due date is required" }),
+    .string()
+    .min(1, "Due date is required")
+    .refine((val) => !isNaN(Date.parse(val)), "Invalid datetime")
+    .transform((val) => new Date(val).toISOString()),
 
   projectId: z.string().min(1, "Project is required"),
   assignments: z
@@ -53,6 +50,7 @@ export const TaskSchema = z.object({
 });
 
 type TaskFormData = z.infer<typeof TaskSchema>;
+
 
 const TaskCreateModal = ({
   onClose,
@@ -74,7 +72,7 @@ const TaskCreateModal = ({
       projectId: projectAutoSelect ? projectAutoSelect?.id : "",
       status: TaskStatus.BACKLOG,
       priority: TaskPriority.MEDIUM,
-      dueDate: undefined,
+      dueDate: "",
       assignments: [],
     },
   });

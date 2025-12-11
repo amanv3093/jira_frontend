@@ -8,7 +8,7 @@ import {
 
 import { projectService } from "@/services/project";
 import { toast } from "sonner";
-import { Project } from "@/types";
+import { Member, Project } from "@/types";
 import { memberService } from "@/services/member";
 
 
@@ -39,7 +39,7 @@ export const useInviteMember = () => {
 
 export const useGetMemberByWorkspaceId = (
   id?: string,
-  options?: Omit<UseQueryOptions<Project[], Error>, "queryKey" | "queryFn">
+  options?: Omit<UseQueryOptions<Member[], Error>, "queryKey" | "queryFn">
 ) => {
   return useQuery({
     queryKey: ["getMember", id],

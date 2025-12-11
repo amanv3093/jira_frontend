@@ -1,7 +1,6 @@
 import { fetchHandler, fetchHandlerWithFormData } from "@/lib/api-utils";
 import { ApiResponse } from "@/types";
-import axios from "axios";
-import { getSession } from "next-auth/react";
+
 
 const WORKSPACE_API = {
   GET: "workspace",
