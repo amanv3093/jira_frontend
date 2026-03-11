@@ -1,30 +1,48 @@
 // src/components/ui/avatar.tsx
 "use client"
 import * as React from "react"
-import { cn } from "@/lib/utils" // optional, if you have a cn utility
+import { cn } from "@/lib/utils"
 
-export interface AvatarProps extends React.ImgHTMLAttributes<HTMLImageElement> {
-  size?: number
-}
+export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function Avatar({ size = 40, className, ...props }: AvatarProps) {
+export function Avatar({ className, children, ...props }: AvatarProps) {
   return (
     <div
       className={cn(
-        "relative rounded-full bg-gray-200 flex items-center justify-center overflow-hidden",
+        "relative rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0",
         className
       )}
-      style={{ width: size, height: size }}
+      {...props}
     >
-      {props.src ? <AvatarImage {...props} /> : <AvatarFallback />}
+      {children}
     </div>
   )
 }
 
-export function AvatarImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  return <img {...props} className="w-full h-full object-cover" />
+export function AvatarImage({
+  className,
+  alt,
+  ...props
+}: React.ImgHTMLAttributes<HTMLImageElement>) {
+  return (
+    <img
+      alt={alt}
+      className={cn("w-full h-full object-cover", className)}
+      {...props}
+    />
+  )
 }
 
-export function AvatarFallback({ children = "U" }: { children?: React.ReactNode }) {
-  return <span className="text-gray-600 font-medium">{children}</span>
+export function AvatarFallback({
+  children = "U",
+  className,
+}: {
+  children?: React.ReactNode
+  className?: string
+}) {
+  return (
+    <span className={cn("text-muted-foreground font-medium", className)}>
+      {children}
+    </span>
+  )
 }

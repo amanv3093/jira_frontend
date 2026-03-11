@@ -1,29 +1,44 @@
 "use client";
+
 import React, { useState } from "react";
 import { useCustomToast } from "@/components/providers/toaster-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
-import * as z from "zod";
 import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Loader2,
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Lock,
+  ArrowRight,
+  CheckCircle2,
+  ShieldCheck,
+} from "lucide-react";
+import Image from "next/image";
+import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-// import { resetPassword } from "@/services/auth/auth";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { resetPassword } from "@/services/auth/auth";
 
-const formSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+const formSchema = z
+  .object({
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ["confirm_password"],
+  });
+
+type FormData = z.infer<typeof formSchema>;
 
 export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useCustomToast();
@@ -31,130 +46,262 @@ export default function ResetPassword() {
   const email = searchParams.get("email");
   const token = searchParams.get("token");
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      password: "",
-    },
+    defaultValues: { password: "", confirm_password: "" },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormData) => {
     if (!token || !email) {
       toast.error({ message: "Reset token or email is missing" });
       return;
     }
 
-    // try {
-    //   setIsLoading(true);
-    //   const response = await resetPassword(token, values.password, email);
+    try {
+      setIsLoading(true);
+      const response = await resetPassword(token, values.password, email);
 
-    //   if (response.success) {
-    //     toast.success({ message: "Password reset successful" });
-    //     router.push("/sign-in");
-    //   } else {
-    //     toast.error({ message: response.message });
-    //   }
-    // } catch (error) {
-    //   toast.error({
-    //     message:
-    //       error instanceof Error
-    //         ? error.message
-    //         : "Something went wrong. Please try again.",
-    //   });
-    // } finally {
-    //   setIsLoading(false);
-    // }
+      if (response.success) {
+        setResetSuccess(true);
+        toast.success({ message: "Password reset successfully!" });
+      } else {
+        toast.error({
+          message: response.message || response.error || "Reset failed",
+        });
+      }
+    } catch (error) {
+      toast.error({
+        message:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return (
-    <section className="min-h-screen flex">
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md relative">
-          <Button
-            onClick={() => router.push("/sign-in")}
-            variant="ghost"
-            className="absolute top-0 left-[-10px] p-2 hover:bg-gray-100 rounded-full"
-          >
-            <ArrowLeft className="h-6 w-6" />
-          </Button>
-
-          <div className="mt-12">
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">
-              Reset Password
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Enter your new password to reset your account.
+  // Invalid link state
+  if (!token || !email) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background px-6">
+        <div className="max-w-md text-center space-y-6">
+          <div className="mx-auto w-16 h-16 rounded-full bg-red-50 dark:bg-red-950 flex items-center justify-center">
+            <ShieldCheck className="h-8 w-8 text-red-500" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">
+              Invalid Reset Link
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              This password reset link is invalid or has expired. Please request
+              a new one.
             </p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button onClick={() => router.push("/forget-password")} className="gap-2">
+              Request New Link
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Link
+              href="/sign-in"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Back to sign in
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-            <Form {...form}>
+  return (
+    <div className="min-h-screen w-full flex">
+      {/* Left - Image Panel */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800" />
+        <Image
+          src="/photo-1616024088876-6a83436b7956.avif"
+          alt="Reset password background"
+          fill
+          unoptimized
+          className="object-cover mix-blend-overlay opacity-40"
+        />
+        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
+          <div className="flex items-center gap-3 mb-8">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={48}
+              height={48}
+              className="h-12 w-auto brightness-0 invert"
+            />
+          </div>
+          <h1 className="text-4xl font-bold leading-tight mb-4">
+            Set your new
+            <br />
+            password
+          </h1>
+          <p className="text-lg text-white/70 max-w-md">
+            Choose a strong password to keep your account secure and get back to
+            your workspace.
+          </p>
+          <div className="mt-12 space-y-3">
+            <div className="flex items-center gap-3 text-sm text-white/70">
+              <CheckCircle2 className="h-4 w-4 text-green-300" />
+              At least 8 characters long
+            </div>
+            <div className="flex items-center gap-3 text-sm text-white/70">
+              <CheckCircle2 className="h-4 w-4 text-green-300" />
+              Mix of letters and numbers recommended
+            </div>
+            <div className="flex items-center gap-3 text-sm text-white/70">
+              <CheckCircle2 className="h-4 w-4 text-green-300" />
+              Avoid using common words
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right - Form Panel */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
+        <div className="w-full max-w-[420px] space-y-8">
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-2 mb-4">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+            />
+          </div>
+
+          {/* Back link */}
+          <Link
+            href="/sign-in"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to sign in
+          </Link>
+
+          {!resetSuccess ? (
+            <>
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">
+                  Reset password
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Create a new password for{" "}
+                  <span className="font-medium text-foreground">{email}</span>
+                </p>
+              </div>
+
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-4"
               >
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">
-                        New Password
-                      </FormLabel>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter new password"
-                          {...field}
-                          className="py-2 px-4 rounded-lg border-gray-300 focus:ring-primary focus:border-primary"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <Eye className="h-5 w-5 text-gray-500" />
-                          ) : (
-                            <EyeOff className="h-5 w-5 text-gray-500" />
-                          )}
-                        </Button>
-                      </div>
-                      <FormMessage />
-                    </FormItem>
+                {/* New Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="password">New Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      {...register("password")}
+                      placeholder="Min. 8 characters"
+                      className="pl-10 pr-10 h-11"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
                   )}
-                />
+                </div>
+
+                {/* Confirm Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirm_password">Confirm Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="confirm_password"
+                      type={showPassword ? "text" : "password"}
+                      {...register("confirm_password")}
+                      placeholder="Repeat your password"
+                      className="pl-10 h-11"
+                    />
+                  </div>
+                  {errors.confirm_password && (
+                    <p className="text-sm text-red-500">
+                      {errors.confirm_password.message}
+                    </p>
+                  )}
+                </div>
 
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary text-white hover:bg-primary/90 transition-colors font-semibold py-3 rounded-lg text-lg shadow-md"
+                  className="w-full h-11 gap-2 font-medium"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 size={24} className="animate-spin mr-2" />
-                      Resetting Password...
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Resetting...
                     </>
                   ) : (
-                    "Reset Password"
+                    <>
+                      Reset Password
+                      <ArrowRight className="h-4 w-4" />
+                    </>
                   )}
                 </Button>
               </form>
-            </Form>
-          </div>
+            </>
+          ) : (
+            /* Success state */
+            <div className="space-y-6 text-center py-8">
+              <div className="mx-auto w-16 h-16 rounded-full bg-green-50 dark:bg-green-950 flex items-center justify-center">
+                <CheckCircle2 className="h-8 w-8 text-green-500" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">
+                  Password reset!
+                </h2>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Your password has been updated successfully. You can now sign
+                  in with your new password.
+                </p>
+              </div>
+              <Button
+                onClick={() => router.push("/sign-in")}
+                className="gap-2"
+              >
+                Continue to Sign In
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="hidden lg:block w-1/2 bg-primary relative">
-        <div className="absolute inset-0 bg-opacity-70 bg-primary flex items-center justify-center">
-          <div className="text-white text-center">
-            <h2 className="text-4xl font-bold mb-4">Reset Your Password</h2>
-            <p className="text-xl">
-              Create a new secure password for your account
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div>
   );
 }

@@ -52,7 +52,53 @@ export const useGetMemberByWorkspaceId = (
     staleTime: 1000 * 60 * 5,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    refetchOnReconnect: false, 
+    refetchOnReconnect: false,
     ...options,
+  });
+};
+
+export const useRemoveMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ workspaceId, memberId }: { workspaceId: string; memberId: string }) => {
+      const response = await memberService.removeMember(workspaceId, memberId);
+      return response;
+    },
+    onSuccess: (_data, variables) => {
+      toast.success("Member removed successfully");
+      queryClient.invalidateQueries({ queryKey: ["getMember", variables.workspaceId] });
+    },
+    onError: (error: any) => {
+      const message = error?.error || "Failed to remove member";
+      toast.error(message);
+    },
+  });
+};
+
+export const useUpdateMemberRole = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      workspaceId,
+      memberId,
+      role,
+    }: {
+      workspaceId: string;
+      memberId: string;
+      role: string;
+    }) => {
+      const response = await memberService.updateMemberRole(workspaceId, memberId, role);
+      return response;
+    },
+    onSuccess: (_data, variables) => {
+      toast.success("Member role updated");
+      queryClient.invalidateQueries({ queryKey: ["getMember", variables.workspaceId] });
+    },
+    onError: (error: any) => {
+      const message = error?.error || "Failed to update role";
+      toast.error(message);
+    },
   });
 };

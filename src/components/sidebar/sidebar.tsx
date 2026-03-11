@@ -51,6 +51,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
   useEffect(() => {
     if (workspaceIdFromUrl && workspaceIdFromUrl !== selectedWorkspaceId) {
       setSelectedWorkspaceId(workspaceIdFromUrl);
+      localStorage.setItem("lastWorkspaceId", workspaceIdFromUrl);
     }
   }, [workspaceIdFromUrl]);
 
@@ -87,12 +88,12 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
       >
         <Layout fixed>
           <div className="w-full   h-16 shadow-sm p-4">
-            <div className="bg-gray-200 h-8 w-full rounded animate-pulse" />
+            <div className="bg-muted h-8 w-full rounded animate-pulse" />
           </div>
 
           <div className="p-4 border-b border-border space-y-2">
             {/* Workspace selector skeleton */}
-            <div className="bg-gray-200 h-10 w-full rounded animate-pulse" />
+            <div className="bg-muted h-10 w-full rounded animate-pulse" />
           </div>
 
           <nav className="flex-1 overflow-auto p-4 space-y-2">
@@ -100,7 +101,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-gray-200 h-10 w-full rounded animate-pulse"
+                className="bg-muted h-10 w-full rounded animate-pulse"
               />
             ))}
           </nav>
@@ -108,13 +109,13 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
           <div className="p-4 border-t border-border">
             {/* Projects skeleton */}
             <div className="flex items-center justify-between mb-2">
-              <div className="bg-gray-200 h-6 w-24 rounded animate-pulse" />
-              <div className="bg-gray-200 h-6 w-6 rounded-md animate-pulse" />
+              <div className="bg-muted h-6 w-24 rounded animate-pulse" />
+              <div className="bg-muted h-6 w-6 rounded-md animate-pulse" />
             </div>
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-gray-200 h-8 w-full rounded mb-1 animate-pulse"
+                className="bg-muted h-8 w-full rounded mb-1 animate-pulse"
               />
             ))}
           </div>
@@ -178,8 +179,10 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
         <div className="p-4 border-b border-border">
           <WorkspaceSelector
             workspaces={workspaces || []}
+            currentWorkspaceId={selectedWorkspaceId}
             onSelect={(id) => {
               setSelectedWorkspaceId(id);
+              localStorage.setItem("lastWorkspaceId", id);
               router.push(`/workspace/${id}`);
             }}
           />
@@ -205,7 +208,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
           <div className="flex items-center justify-between mb-1">
             <h1>Projects</h1>
             <div
-              className="bg-gray-100 rounded-md p-1 cursor-pointer"
+              className="bg-muted rounded-md p-1 cursor-pointer"
               onClick={() => setIsModalOpen(true)}
             >
               <Plus size={14} />
@@ -221,8 +224,8 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
                   <li
                     key={project.id}
                     className={`flex items-center gap-2 cursor-pointer ${cn(
-                      "block px-2 py-1 rounded hover:bg-gray-200",
-                      isActive && "bg-gray-200 font-medium"
+                      "block px-2 py-1 rounded hover:bg-muted",
+                      isActive && "bg-muted font-medium"
                     )}`}
                   >
                     {project?.profilePic ? (
@@ -283,7 +286,7 @@ function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
 
         {showLogoutPopup && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg p-6 shadow-md w-96">
+            <div className="bg-background rounded-lg p-6 shadow-md w-96 border border-border">
               <h3 className="text-lg font-semibold">Confirm Logout</h3>
               <p className="mt-2 text-sm">Are you sure you want to log out?</p>
               <div className="mt-4 flex justify-end gap-2">

@@ -176,11 +176,11 @@ function NavLinkIcon({ title, icon, label, href }: NavLinkProps) {
             checkActiveNav(href) && 'bg-primary/15 text-primary hover:bg-primary/20'
           )}
         >
-          <div className="text-black">{icon}</div>
+          <div className="text-foreground">{icon}</div>
           <span className='sr-only'>{title}</span>
         </Link>
       </TooltipTrigger>
-      <TooltipContent side='right' className='flex items-center gap-4 rounded-lg border border-primary/10 bg-background/95 px-3 py-2 backdrop-blur text-black'>
+      <TooltipContent side='right' className='flex items-center gap-4 rounded-lg border border-primary/10 bg-background/95 px-3 py-2 backdrop-blur text-foreground'>
         <span className="font-medium">{title}</span>
         {label && (
           <span className='rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary'>{label}</span>
@@ -207,11 +207,11 @@ function NavLinkIconDropdown({ title, icon, label, sub }: NavLinkProps) {
                 isChildActive && 'bg-primary/15 text-primary hover:bg-primary/20'
               )}
             >
-              <div className="text-black">{icon}</div>
+              <div className="text-foreground">{icon}</div>
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <TooltipContent side='right' className='flex items-center gap-4 rounded-lg border border-primary/10 bg-background/95 px-3 py-2 backdrop-blur text-black'>
+        <TooltipContent side='right' className='flex items-center gap-4 rounded-lg border border-primary/10 bg-background/95 px-3 py-2 backdrop-blur text-foreground'>
           <span className="font-medium">{title}</span>
           {label && (
             <span className='rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary'>{label}</span>
@@ -233,7 +233,7 @@ function NavLinkIconDropdown({ title, icon, label, sub }: NavLinkProps) {
                 checkActiveNav(href) ? 'bg-primary/15 text-primary' : 'hover:bg-primary/10'
               )}
             >
-              <span className="text-black">{icon}</span>
+              <span className="text-foreground">{icon}</span>
               <span className='ml-2 flex-1 truncate font-medium'>{title}</span>
               {label && <span className='ml-2 rounded-md bg-primary/10 px-1.5 py-0.5 text-xs text-primary'>{label}</span>}
             </Link>

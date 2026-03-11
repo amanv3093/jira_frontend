@@ -8,6 +8,7 @@ const TASK_API = {
   GET_BY_WORKSPACE_ID: (id: string) => `task/workspace/${id}`,
   GET_BY_PROJECT_ID: (id: string) => `task/project/${id}`,
   EDIT_TASK: (id: string) => `task/${id}`,
+  DELETE_TASK: (id: string) => `task/${id}`,
 } as const;
 
 export const taskService = {
@@ -17,7 +18,9 @@ export const taskService = {
   createTask: (payload: any) =>
     fetchHandler<ApiResponse>(TASK_API.POST, "POST", payload),
   updateTask: (id: string, payload: any) =>
-  fetchHandler<ApiResponse>(TASK_API.EDIT_TASK(id), "PUT", payload),
+    fetchHandler<ApiResponse>(TASK_API.EDIT_TASK(id), "PUT", payload),
+  deleteTask: (id: string) =>
+    fetchHandler<ApiResponse>(TASK_API.DELETE_TASK(id), "DELETE"),
 
   getTaskByWorkspaceId: (id: string, filters?: Record<string, any>) => {
     let url = TASK_API.GET_BY_WORKSPACE_ID(id);

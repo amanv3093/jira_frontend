@@ -69,7 +69,7 @@ function ProjectPage() {
         <p>{project?.name}</p>
         <Button>Edit</Button>
       </div>
-      <TaskStatsCards />
+      <TaskStatsCards tasks={task || []} />
      
 
         <div className="flex justify-between items-center">
@@ -105,11 +105,11 @@ function ProjectPage() {
             <DropdownMenuContent
               align="start"
               sideOffset={4}
-              className="bg-white border border-gray-200 rounded-md shadow-lg p-1 z-50 w-[var(--radix-dropdown-menu-trigger-width)]"
+              className="bg-popover border border-border rounded-md shadow-lg p-1 z-50 w-[var(--radix-dropdown-menu-trigger-width)]"
             >
               <DropdownMenuItem
                 onClick={() => setViewMode("table")}
-                className={`flex items-center gap-2 cursor-pointer px-2 py-1 rounded text-sm hover:bg-gray-100 outline-none focus:outline-none focus:ring-0 border-none ${
+                className={`flex items-center gap-2 cursor-pointer px-2 py-1 rounded text-sm hover:bg-muted outline-none focus:outline-none focus:ring-0 border-none ${
                   viewMode === "table" ? "bg-blue-100 text-info" : ""
                 }`}
               >
@@ -118,7 +118,7 @@ function ProjectPage() {
 
               <DropdownMenuItem
                 onClick={() => setViewMode("kanban")}
-                className={`flex items-center gap-2 cursor-pointer px-2 py-1 rounded text-sm hover:bg-gray-100 outline-none focus:outline-none focus:ring-0 border-none ${
+                className={`flex items-center gap-2 cursor-pointer px-2 py-1 rounded text-sm hover:bg-muted outline-none focus:outline-none focus:ring-0 border-none ${
                   viewMode === "kanban" ? "bg-blue-100 text-info" : ""
                 }`}
               >
@@ -130,7 +130,7 @@ function ProjectPage() {
           <Button
             variant="outline"
             onClick={() => setIsModalOpen(true)}
-            className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 order-gray-300 text-black`}
+            className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 order-gray-300 text-foreground`}
           >
             <Plus />
             Create

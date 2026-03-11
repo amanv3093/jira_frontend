@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { Montserrat } from "next/font/google";
 import QueryProvider from "@/components/providers/query-provider";
 import AuthProvider from "@/components/providers/auth-provider";
+import ThemeProvider from "@/components/providers/theme-provider";
 import "./globals.css";
 import React from "react";
 import Loader from "./Loader";
@@ -34,17 +35,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={` ${montserrat.variable} antialiased`}
+      suppressHydrationWarning
     >
       <body>
-        <AuthProvider>
-          <QueryProvider>
-            <React.Suspense fallback={  <div className="flex h-[70vh] items-center justify-center">
-                    <Loader size={40} />
-                  </div>}>
-              {children}
-            </React.Suspense>
-          </QueryProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <QueryProvider>
+              <React.Suspense fallback={  <div className="flex h-[70vh] items-center justify-center">
+                      <Loader size={40} />
+                    </div>}>
+                {children}
+              </React.Suspense>
+            </QueryProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

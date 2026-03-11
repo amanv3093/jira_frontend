@@ -13,11 +13,15 @@ function Page() {
       if (workspaces.length === 0) {
         router.push("/workspace/create", { scroll: false });
       } else {
-        router.push(`/workspace/${workspaces[0].id}`, { scroll: false });
+        const lastId = localStorage.getItem("lastWorkspaceId");
+        const targetId =
+          lastId && workspaces.some((ws: any) => ws.id === lastId)
+            ? lastId
+            : workspaces[0].id;
+        router.push(`/workspace/${targetId}`, { scroll: false });
       }
     }
-
-  }, [workspacesLoading, workspaces,router]);
+  }, [workspacesLoading, workspaces, router]);
   if (workspacesLoading) {
     return (
       <div className="flex h-[70vh] items-center justify-center">

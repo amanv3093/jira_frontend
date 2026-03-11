@@ -16,12 +16,12 @@ async function fetchHandler<T>(
   } catch (error: unknown) {
     if (error && typeof error === "object" && "response" in error) {
       const err = error as {
-        response?: { status?: number; data?: { message?: string } };
+        response?: { status?: number; data?: { error?: string; message?: string } };
       };
       return {
         success: false,
         statusCode: err.response?.status || 500,
-        message: err.response?.data?.message || "An error occurred",
+        message: err.response?.data?.error || err.response?.data?.message || "An error occurred",
       } as T;
     }
     return {
@@ -47,5 +47,21 @@ export async function signup(data: any): Promise<any> {
     last_name: data.last_name,
     email: data.email,
     password: data.password,
+  });
+}
+
+export async function forgetPassword(email: string): Promise<any> {
+  return fetchHandler<any>("/auth/forgot-password", "POST", { email });
+}
+
+export async function resetPassword(
+  token: string,
+  password: string,
+  email: string
+): Promise<any> {
+  return fetchHandler<any>("/auth/reset-password", "POST", {
+    token,
+    password,
+    email,
   });
 }

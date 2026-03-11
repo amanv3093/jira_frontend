@@ -1,74 +1,71 @@
 "use client";
 import React from "react";
-// import { usePathname } from "next/navigation";
-
-// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {  UserCog, UserCheck, LogOut, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
+import { UserCog, UserCheck, LogOut, Sun, Moon, Monitor } from "lucide-react";
 import { cn } from "@/lib/utils";
-// import Profile from "./_components/profile";
-// import ManageProjectDashboard from "../(managment)/manage-project/[id]/dashboard/_components/manage-project-dashboard";
 
 const Header = () => {
-  // const pathname = usePathname();
-  // const isProjectPage = pathname.includes("/manage-project");
   const [open, setOpen] = React.useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
-  const [isDark, setIsDark] = React.useState(
-    typeof window !== "undefined"
-      ? document.documentElement.classList.contains("dark")
-      : false
-  );
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const toggle = () => {
-    const root = document.documentElement;
-    if (root.classList.contains("dark")) {
-      root.classList.remove("dark");
-      setIsDark(false);
-    } else {
-      root.classList.add("dark");
-      setIsDark(true);
-    }
+  const cycleTheme = () => {
+    if (theme === "light") setTheme("dark");
+    else if (theme === "dark") setTheme("system");
+    else setTheme("light");
+  };
+
+  const themeIcon = () => {
+    if (!mounted) return <Moon size={18} />;
+    if (theme === "dark") return <Sun size={18} />;
+    if (theme === "system") return <Monitor size={18} />;
+    return <Moon size={18} />;
   };
 
   return (
-    <div className="shadow-sm flex justify-end p-4">
+    <div className="shadow-sm dark:shadow-border/20 flex justify-end p-4 bg-background">
       <div className="flex items-center gap-2">
         <button
-          onClick={toggle}
-          className="p-2 rounded hover:bg-gray-200 bg-gray-200 transition h-[30px] w-[30px] flex items-center justify-center"
+          onClick={cycleTheme}
+          className="p-2 rounded-md hover:bg-muted bg-muted/60 transition h-[30px] w-[30px] flex items-center justify-center text-foreground"
+          title={`Theme: ${theme}`}
         >
-          {isDark ? <Sun size={20} /> : <Moon size={20} />}
+          {themeIcon()}
         </button>
-        <div className="relative ">
+        <div className="relative">
           <button
             onClick={() => setOpen(!open)}
             className="flex items-center gap-2 rounded-sm h-[30px] w-[30px]"
           >
-            <div className="relative rounded-sm bg-gray-200 flex items-center justify-center overflow-hidden w-full h-full">
-              <span className="text-gray-600 font-medium">J</span>
+            <div className="relative rounded-sm bg-muted flex items-center justify-center overflow-hidden w-full h-full">
+              <span className="text-muted-foreground font-medium">J</span>
             </div>
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded border z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-popover text-popover-foreground shadow-lg rounded border border-border z-50">
               <ul className="flex flex-col">
                 <li
                   className={cn(
-                    "p-2 hover:bg-gray-100 flex items-center gap-2"
+                    "p-2 hover:bg-muted flex items-center gap-2 cursor-pointer"
                   )}
                 >
                   <UserCog size={16} /> Profile Settings
                 </li>
                 <li
                   className={cn(
-                    "p-2 hover:bg-gray-100 flex items-center gap-2"
+                    "p-2 hover:bg-muted flex items-center gap-2 cursor-pointer"
                   )}
                 >
                   <UserCheck size={16} /> My Tasks
                 </li>
                 <li
                   className={cn(
-                    "p-2 hover:bg-gray-100 flex items-center gap-2"
+                    "p-2 hover:bg-muted flex items-center gap-2 cursor-pointer"
                   )}
                 >
                   <LogOut size={16} /> Logout

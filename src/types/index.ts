@@ -101,3 +101,64 @@ export interface Workspace {
   members: Member[];
   projects: Project[];
 }
+
+export interface DashboardProject {
+  id: string;
+  name: string;
+  description?: string | null;
+  profilePic?: string | null;
+  createdAt: string;
+  status: "completed" | "in_progress" | "pending";
+  owner: { id: string; full_name: string; avatarUrl?: string | null };
+  members: { id: string; name: string; avatarUrl?: string | null }[];
+  taskStats: {
+    total: number;
+    completed: number;
+    overdue: number;
+    completionPercentage: number;
+  };
+}
+
+export interface DashboardData {
+  projectStats: {
+    total: number;
+    completed: number;
+    inProgress: number;
+    pending: number;
+  };
+  projects: DashboardProject[];
+  taskStats: {
+    total: number;
+    completed: number;
+    overdue: number;
+    completionPercentage: number;
+    statusCounts: Record<string, number>;
+    priorityCounts: Record<string, number>;
+  };
+  taskStatusChart: { status: string; count: number }[];
+  taskPriorityChart: { priority: string; count: number }[];
+  recentTasks: {
+    id: string;
+    task_name: string;
+    status: TaskStatus;
+    priority: TaskPriority;
+    dueDate: string | null;
+    createdAt: string;
+    project: { id: string; name: string; profilePic?: string | null };
+    assignees: { id: string; name: string; avatarUrl?: string | null }[];
+  }[];
+  memberStats: {
+    id: string;
+    userId: string;
+    name: string;
+    email: string;
+    avatarUrl?: string | null;
+    role: MemberRole;
+    joinedAt: string;
+    stats: {
+      totalTasks: number;
+      completedTasks: number;
+      overdueTasks: number;
+    };
+  }[];
+}

@@ -63,7 +63,7 @@ export const useCustomToast = () => {
             <span className="text-sm font-semibold">{config.title}</span>
             <span className="font-medium">{message}</span>
             {description && (
-              <span className="text-sm text-gray-600">{description}</span>
+              <span className="text-sm text-muted-foreground">{description}</span>
             )}
           </div>
         </div>

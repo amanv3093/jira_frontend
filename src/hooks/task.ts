@@ -87,13 +87,32 @@ export const useUpdateTask = () => {
     },
     onSuccess: () => {
       toast.success("Task updated successfully");
-      // Invalidate cached task data so UI refreshes
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByProjectId"] });
     },
     onError: (error: unknown) => {
       const message =
         error instanceof Error ? error.message : "Failed to update Task";
+      toast.error(message);
+    },
+  });
+};
+
+export const useDeleteTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      return await taskService.deleteTask(id);
+    },
+    onSuccess: () => {
+      toast.success("Task deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
+      queryClient.invalidateQueries({ queryKey: ["getAllTaskByProjectId"] });
+    },
+    onError: (error: unknown) => {
+      const message =
+        error instanceof Error ? error.message : "Failed to delete Task";
       toast.error(message);
     },
   });

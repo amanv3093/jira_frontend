@@ -126,12 +126,12 @@ export default function JoinPage() {
         <CardContent>
           {verifying ? (
             <div className="flex justify-center items-center h-24">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) :  isValid ? (
             <div className="space-y-6 text-center">
               <div>
-                <p className="text-gray-700">You’ve been invited to join:</p>
+                <p className="text-foreground">You’ve been invited to join:</p>
                 <p className="font-semibold text-lg mt-1">
                   {inviteInfo?.workspace?.name || "Workspace"}{" "}
                   {inviteInfo?.project?.name
@@ -159,7 +159,7 @@ export default function JoinPage() {
             // Manual token entry UI
             <div className="space-y-6">
               <div>
-                <label className="text-sm font-medium text-gray-700">
+                <label className="text-sm font-medium text-foreground">
                   Enter Invite Token
                 </label>
                 <Input

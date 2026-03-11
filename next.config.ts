@@ -1,10 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
-// next.config.js
-module.exports = {
   images: {
     remotePatterns: [
       {
@@ -13,10 +9,6 @@ module.exports = {
       },
     ],
   },
-   eslint: {
-    ignoreDuringBuilds: true,   // ← ADD HERE
-  },
 };
-
 
 export default nextConfig;

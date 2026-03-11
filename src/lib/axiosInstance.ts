@@ -10,8 +10,8 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
-  // Skip token for admin login
-  if (!config.url?.endsWith("/admin/login")) {
+  // Skip token for auth endpoints (login, signup)
+  if (!config.url?.startsWith("/auth/")) {
     const session = await getSession();
     const token = session?.user.token;
     if (token) {

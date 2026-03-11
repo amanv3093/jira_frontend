@@ -51,3 +51,44 @@ export const useCreateWorkspace = () => {
     },
   });
 };
+
+export const useUpdateWorkspace = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
+      const response = await workspaceService.updateWorkspace(id, formData);
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      toast.success("Workspace updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["getWorkspaceById", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["getAllWorkspace"] });
+    },
+    onError: (err: unknown) => {
+      const message =
+        err instanceof Error ? err.message : "Failed to update workspace";
+      toast.error(message);
+    },
+  });
+};
+
+export const useDeleteWorkspace = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await workspaceService.deleteWorkspace(id);
+      return response;
+    },
+    onSuccess: () => {
+      toast.success("Workspace deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["getAllWorkspace"] });
+    },
+    onError: (err: unknown) => {
+      const message =
+        err instanceof Error ? err.message : "Failed to delete workspace";
+      toast.error(message);
+    },
+  });
+};

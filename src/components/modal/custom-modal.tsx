@@ -43,7 +43,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         // ref={modalRef}
         className={cn(
-          "bg-white rounded-lg shadow-xl w-fit min-w-md mt-12 mb-16 max-h-fit",
+          "bg-background rounded-lg shadow-xl w-fit min-w-md mt-12 mb-16 max-h-fit",
           className,
         )}
         // Ensure modal content handles propagation

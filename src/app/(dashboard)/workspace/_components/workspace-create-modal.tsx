@@ -80,7 +80,7 @@ const WorkspaceCreateModal = ({ onClose }: Props) => {
         <h2 className="text-lg font-semibold">Create Workspace</h2>
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-gray-100"
+          className="p-1 rounded-md hover:bg-muted"
           aria-label="Close"
         >
           <X size={18} />
