@@ -2,13 +2,6 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle, Trash2, Mail, X } from "lucide-react";
-import { useGetProjectByWorkspaceId } from "@/hooks/project";
+import { AlertCircle, Trash2, Mail, X, Loader2, Plus } from "lucide-react";
 import { useParams } from "next/navigation";
 import { getSession } from "next-auth/react";
 
@@ -34,11 +26,6 @@ type InviteRow = {
 interface InviteProp {
   onClose: () => void;
 }
-type Project = {
-  id?: string;
-  name?: string;
-};
-
 
 export default function InvitePage({ onClose }: InviteProp) {
   const [rows, setRows] = useState<InviteRow[]>([
@@ -48,16 +35,8 @@ export default function InvitePage({ onClose }: InviteProp) {
   const { id } = useParams();
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [projectId, setProjectId] = useState<string>("");
-
-  const { data: projects, isLoading: projectsLoading } =
-    useGetProjectByWorkspaceId(id as string);
 
   function addRow() {
-    if (!projectId) {
-      toast.error("Select a project first.");
-      return;
-    }
     setRows([...rows, { id: Date.now(), email: "", role: "member" }]);
   }
 
@@ -75,11 +54,6 @@ export default function InvitePage({ onClose }: InviteProp) {
   }
 
   async function handleInvite() {
-    if (!projectId) {
-      toast.error("Please select a project.");
-      return;
-    }
-
     let hasError = false;
     const updated = rows.map((row) => {
       if (!row.email.includes("@")) {
@@ -105,7 +79,6 @@ export default function InvitePage({ onClose }: InviteProp) {
             Authorization: `Bearer ${session?.user?.token}`,
           },
           body: JSON.stringify({
-            projectId,
             workspaceId: id,
             invites: rows.map((r) => ({
               email: r.email,
@@ -123,7 +96,11 @@ export default function InvitePage({ onClose }: InviteProp) {
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Error sending invite";
-      toast.error(message);
+      if (message.includes("Member limit reached") || message.includes("member limit")) {
+        toast.error("Member limit reached. Please upgrade your workspace plan in Settings.");
+      } else {
+        toast.error(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -136,139 +113,122 @@ export default function InvitePage({ onClose }: InviteProp) {
   }
 
   return (
-    <Card className="w-full max-w-xl p-4 border-none shadow-none ">
-      <div className="flex justify-end">
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Invite People</h2>
+          <p className="text-sm text-muted-foreground">
+            Members will have access to all projects in this workspace
+          </p>
+        </div>
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-muted"
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
           aria-label="Close"
         >
           <X size={18} />
         </button>
       </div>
-      <CardHeader className="p-0 mb-3">
-        <CardTitle>Invite People to Project</CardTitle>
-        <CardDescription>Select project to invite members</CardDescription>
-      </CardHeader>
 
-      {/* Project Selector */}
-      <div className="space-y-2 mb-4">
-        <Label>Select Project</Label>
-        <Select
-          value={projectId}
-          onValueChange={(value) => setProjectId(value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Choose a project" />
-          </SelectTrigger>
-          <SelectContent>
-            {!projectsLoading &&
-              projects?.map((project: any) => (
-                <SelectItem key={project.id} value={project?.id}>
-                  {project.name}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Email rows */}
+      <div className="space-y-3">
+        <Label>Invite with Email</Label>
 
-      <CardContent className="space-y-6 p-0">
-        {/* Email rows */}
-        <div>
-          <Label>Invite with Email</Label>
-          {!projectId && (
-            <p className="text-xs text-red-600 mt-1">
-              Select a project before adding emails
-            </p>
-          )}
+        {rows.map((row) => (
+          <div key={row.id} className="flex gap-2 items-start">
+            <div className="flex-1 min-w-0">
+              <Input
+                placeholder="email@address.com"
+                value={row.email}
+                onChange={(e) => updateRow(row.id, "email", e.target.value)}
+                className={
+                  row.error
+                    ? "border-red-500 focus-visible:ring-red-500"
+                    : ""
+                }
+              />
+              {row.error && (
+                <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
+                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                  {row.error}
+                </p>
+              )}
+            </div>
 
-          <div className="space-y-3 mt-2">
-            {rows.map((row) => (
-              <div key={row.id} className="flex gap-2 items-start">
-                <div className="w-full">
-                  <Input
-                    disabled={!projectId}
-                    placeholder="email@address.com"
-                    value={row.email}
-                    onChange={(e) => updateRow(row.id, "email", e.target.value)}
-                    className={
-                      row.error
-                        ? "border-red-500 focus-visible:ring-red-500"
-                        : ""
-                    }
-                  />
-                  {row.error && (
-                    <p className="text-sm text-red-600 flex gap-1 mt-1">
-                      <AlertCircle className="h-4 w-4" />
-                      {row.error}
-                    </p>
-                  )}
-                </div>
-
-                <Select
-                  disabled={!projectId}
-                  value={row.role}
-                  onValueChange={(value) => updateRow(row.id, "role", value)}
-                >
-                  <SelectTrigger className="w-[100px]">
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="member">Member</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="owner">Owner</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Button
-                  disabled={rows.length === 1 || !projectId}
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeRow(row.id)}
-                >
-                  <Trash2 className="h-4 w-4 text-muted-foreground" />
-                </Button>
-              </div>
-            ))}
+            <Select
+              value={row.role}
+              onValueChange={(value) => updateRow(row.id, "role", value)}
+            >
+              <SelectTrigger className="w-[110px] shrink-0">
+                <SelectValue placeholder="Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="member">Member</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="owner">Owner</SelectItem>
+              </SelectContent>
+            </Select>
 
             <Button
-              variant="link"
-              className="p-0 text-blue-600 mt-1"
-              onClick={addRow}
-              disabled={!projectId}
+              disabled={rows.length === 1}
+              variant="ghost"
+              size="icon"
+              onClick={() => removeRow(row.id)}
+              className="shrink-0"
             >
-              + Add email
+              <Trash2 className="h-4 w-4 text-muted-foreground" />
             </Button>
+          </div>
+        ))}
 
-            <Button
-              className="w-full"
-              onClick={handleInvite}
-              disabled={!projectId || loading}
-            >
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-blue-600 dark:text-blue-400 px-0 hover:bg-transparent hover:text-blue-700 dark:hover:text-blue-300"
+          onClick={addRow}
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          Add another
+        </Button>
+
+        <Button
+          className="w-full"
+          onClick={handleInvite}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            <>
               <Mail className="mr-2 h-4 w-4" />
               Send Invites
-            </Button>
-          </div>
-        </div>
+            </>
+          )}
+        </Button>
+      </div>
 
-        {/* Link section */}
-        <div className="space-y-2">
-          <Label>Invite with Link</Label>
-          <div className="flex gap-2">
-            <Input value={inviteUrl || ""} disabled />
-            <Button
-              variant="outline"
-              onClick={handleCopy}
-              disabled={!inviteUrl}
-            >
-              Copy Link
-            </Button>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Anyone with this link can join the project
-          </p>
+      {/* Link section */}
+      <div className="space-y-2 pt-2 border-t border-border">
+        <Label>Invite with Link</Label>
+        <div className="flex gap-2">
+          <Input value={inviteUrl || ""} disabled className="flex-1" />
+          <Button
+            variant="outline"
+            onClick={handleCopy}
+            disabled={!inviteUrl}
+            className="shrink-0"
+          >
+            Copy Link
+          </Button>
         </div>
-      </CardContent>
-    </Card>
+        <p className="text-xs text-muted-foreground">
+          Anyone with this link can join the workspace
+        </p>
+      </div>
+    </div>
   );
 }

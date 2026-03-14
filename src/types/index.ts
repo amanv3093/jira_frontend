@@ -100,6 +100,9 @@ export interface Workspace {
   createdAt: string;
   members: Member[];
   projects: Project[];
+  ownerId?: string;
+  plan?: string;
+  maxMembers?: number;
 }
 
 export interface DashboardProject {

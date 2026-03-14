@@ -49,12 +49,12 @@ export default function RootLayout({
   // }
 
   return (
-    <div className="relative h-full overflow-hidden bg-background">
+    <div className="group/sidebar relative h-full overflow-hidden bg-background">
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main
         id="content"
-        className={`overflow-x-hidden pt-16 transition-[margin] md:overflow-y-hidden md:pt-0 ${
-          isCollapsed ? "md:ml-14" : "md:ml-64"
+        className={`overflow-x-hidden pt-16 transition-[margin] duration-200 ease-out md:overflow-y-hidden md:pt-0 ${
+          isCollapsed ? "md:ml-[52px]" : "md:ml-[260px]"
         } h-full`}
       >
         <Header />

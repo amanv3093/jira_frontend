@@ -23,8 +23,9 @@ import {
 } from "lucide-react";
 import Modal from "@/components/modal/custom-modal";
 import InvitePage from "./invite-modal";
-import { useGetMemberByWorkspaceId } from "@/hooks/member";
+import { useGetMemberByWorkspaceId, useRemoveMember } from "@/hooks/member";
 import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Loader from "@/app/Loader";
 import JoinPage from "./join-modal";
 import { Member } from "@/types";
@@ -54,6 +55,13 @@ export default function MemberCard() {
   const params = useParams();
   const workspaceId = params?.id as string;
   const { data: members, isLoading } = useGetMemberByWorkspaceId(workspaceId);
+  const { data: session } = useSession();
+  const removeMember = useRemoveMember();
+
+  const currentUserRole = (session?.user as any)?.role;
+  const currentUserId = (session?.user as any)?.id;
+  const canManageMembers = currentUserRole === "ADMIN" || currentUserRole === "MANAGER" ||
+    members?.some((m: Member) => m.userId === currentUserId && m.role === "OWNER");
 
   const filtered = useMemo(() => {
     if (!members) return [];
@@ -111,10 +119,12 @@ export default function MemberCard() {
             <Link2 className="h-4 w-4 mr-1.5" />
             Join
           </Button>
-          <Button size="sm" onClick={() => setIsModalOpen(true)}>
-            <UserPlus className="h-4 w-4 mr-1.5" />
-            Invite
-          </Button>
+          {canManageMembers && (
+            <Button size="sm" onClick={() => setIsModalOpen(true)}>
+              <UserPlus className="h-4 w-4 mr-1.5" />
+              Invite
+            </Button>
+          )}
         </div>
       </div>
 
@@ -225,9 +235,14 @@ export default function MemberCard() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem>Assign task</DropdownMenuItem>
                         <DropdownMenuItem>View tasks</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          Remove
-                        </DropdownMenuItem>
+                        {canManageMembers && m.role !== "OWNER" && m.userId !== currentUserId && (
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => removeMember.mutate({ workspaceId, memberId: m.id })}
+                          >
+                            Remove
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

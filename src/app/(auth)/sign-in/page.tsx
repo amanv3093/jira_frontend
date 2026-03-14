@@ -84,23 +84,28 @@ const SignInForm = () => {
 
   return (
     <div className="min-h-screen w-full flex">
-      {/* Left - Image Panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800" />
-        <Image
-          src="/photo-1616024088876-6a83436b7956.avif"
-          alt="Sign in background"
-          fill
-          unoptimized
-          className="object-cover mix-blend-overlay opacity-40"
-        />
+      {/* Left - Visual Panel */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900">
+        {/* Animated background shapes */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-white/5 blur-3xl animate-pulse" />
+          <div className="absolute top-1/2 -right-20 h-80 w-80 rounded-full bg-indigo-400/10 blur-2xl animate-pulse [animation-delay:1s]" />
+          <div className="absolute -bottom-16 left-1/3 h-72 w-72 rounded-full bg-blue-300/10 blur-2xl animate-pulse [animation-delay:2s]" />
+          {/* Grid pattern */}
+          <svg className="absolute inset-0 h-full w-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="signin-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#signin-grid)" />
+          </svg>
+        </div>
         <div className="relative z-10 flex flex-col justify-center px-16 text-white">
           <div className="flex items-center gap-3 mb-8">
-            <Image
+            <img
               src="/logo.png"
               alt="Logo"
-              width={48}
-              height={48}
               className="h-12 w-auto brightness-0 invert"
             />
           </div>
@@ -134,11 +139,9 @@ const SignInForm = () => {
         <div className="w-full max-w-[420px] space-y-8">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-4">
-            <Image
+            <img
               src="/logo.png"
               alt="Logo"
-              width={120}
-              height={40}
               className="h-10 w-auto"
             />
           </div>

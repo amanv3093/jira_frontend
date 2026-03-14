@@ -7,6 +7,7 @@ import {
   Settings,
   Layers,
   Users,
+  User,
 } from "lucide-react";
 
 export interface NavLink {
@@ -36,6 +37,7 @@ const mainLinks: SideLink[] = [
 export  const getWorkspaceLinks = (workspaceId: string): SideLink[] => [
   { title: "Home", href: `/workspace/${workspaceId}`, icon: <HomeIcon size={18} /> },
   { title: "My Tasks", href: `/workspace/${workspaceId}/task`, icon: <UserCog size={18} /> },
+  { title: "Profile", href: `/workspace/${workspaceId}/profile`, icon: <User size={18} /> },
   { title: "Settings", href: `/workspace/${workspaceId}/settings`, icon: <Settings size={18} /> },
   { title: "Members", href: `/workspace/${workspaceId}/member`, icon: <Users size={18} /> },
 ];

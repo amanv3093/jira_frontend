@@ -12,6 +12,7 @@ import TaskFilters from "./task-filter";
 import { useForm, FormProvider } from "react-hook-form";
 import { Eye, Plus, Search, LayoutList, Kanban } from "lucide-react";
 import TaskKanban from "./task-kanban";
+import TaskStatsCards from "../../project/[project_id]/_component/task-stats-card";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -88,8 +89,8 @@ function TaskPage() {
     <div>
       <div className="flex justify-between items-center">
         <p>Task Page</p>
-        {/* <Button onClick={() => setIsModalOpen(true)}>Create</Button> */}
       </div>
+      <TaskStatsCards tasks={task || []} />
       <div className="flex justify-between items-center">
         <FormProvider {...methods}>
           <div>

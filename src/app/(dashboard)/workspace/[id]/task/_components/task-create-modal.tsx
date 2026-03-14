@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
@@ -87,13 +86,13 @@ const TaskCreateModal = ({
   };
 
   return (
-    <div className="space-y-4 mx-auto w-[22rem] p-4">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Create Task</h2>
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-muted"
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label="Close"
         >
           <X size={18} />
@@ -153,55 +152,58 @@ const TaskCreateModal = ({
           )}
         </div>
 
-        {/* Status */}
-        <div>
-          <Label>Status</Label>
-          <Controller
-            control={control}
-            name="status"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["BACKLOG", "IN_PROGRESS", "COMPLETED"].map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status.replace("_", " ")}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </div>
+        {/* Status & Priority Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Status */}
+          <div>
+            <Label>Status</Label>
+            <Controller
+              control={control}
+              name="status"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["BACKLOG", "IN_PROGRESS", "COMPLETED"].map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status.replace("_", " ")}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
 
-        {/* Priority */}
-        <div>
-          <Label>Priority</Label>
-          <Controller
-            control={control}
-            name="priority"
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {["LOW", "MEDIUM", "HIGH"].map((p) => (
-                    <SelectItem key={p} value={p}>
-                      {p}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
+          {/* Priority */}
+          <div>
+            <Label>Priority</Label>
+            <Controller
+              control={control}
+              name="priority"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["LOW", "MEDIUM", "HIGH"].map((p) => (
+                      <SelectItem key={p} value={p}>
+                        {p}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
         </div>
 
         {/* Due Date */}
-        <div className="">
-          <Label className="w-1/3 text-left">Due Date</Label>
+        <div>
+          <Label>Due Date</Label>
           <Input
             type="datetime-local"
             {...register("dueDate")}
@@ -251,8 +253,15 @@ const TaskCreateModal = ({
           )}
         </div>
 
-        <Button type="submit" className="w-full">
-          Create Task
+        <Button type="submit" className="w-full" disabled={createTask.isPending}>
+          {createTask.isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            "Create Task"
+          )}
         </Button>
       </form>
     </div>

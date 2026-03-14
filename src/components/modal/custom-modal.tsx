@@ -16,7 +16,7 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   children,
   className,
-   bodyClassName,
+  bodyClassName,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(isOpen);
 
@@ -36,20 +36,30 @@ const Modal: React.FC<ModalProps> = ({
     };
   }, [isModalOpen]);
 
+  // Close on Escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isModalOpen) document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [isModalOpen, onClose]);
+
   if (!isModalOpen) return null;
 
-  const modalContent = ( 
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start overflow-y-auto z-50 max-h-screen">
+  const modalContent = (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 backdrop-blur-sm p-4 sm:p-6 md:p-8 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div
-        // ref={modalRef}
         className={cn(
-          "bg-background rounded-lg shadow-xl w-fit min-w-md mt-12 mb-16 max-h-fit",
-          className,
+          "relative w-full max-w-lg my-8 rounded-lg border border-border bg-background shadow-xl animate-in zoom-in-95 slide-in-from-bottom-2 duration-200",
+          className
         )}
-        // Ensure modal content handles propagation
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`px-2 py-1 ${bodyClassName}`}>
+        <div className={cn("p-4 sm:p-6", bodyClassName)}>
           {typeof children === "function" ? children(onClose) : children}
         </div>
       </div>

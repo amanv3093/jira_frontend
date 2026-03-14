@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -55,13 +55,11 @@ const WorkspaceCreateModal = ({ onClose }: Props) => {
         onClose();
       },
     });
-
-   
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
-    setValue("image", selectedFile); // ✅ store in RHF
+    setValue("image", selectedFile);
     if (selectedFile) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -80,7 +78,7 @@ const WorkspaceCreateModal = ({ onClose }: Props) => {
         <h2 className="text-lg font-semibold">Create Workspace</h2>
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-muted"
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label="Close"
         >
           <X size={18} />
@@ -125,8 +123,15 @@ const WorkspaceCreateModal = ({ onClose }: Props) => {
         </div>
 
         {/* Submit Button */}
-        <Button type="submit" className="w-full">
-          Create
+        <Button type="submit" className="w-full" disabled={createWorkspace.isPending}>
+          {createWorkspace.isPending ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            "Create"
+          )}
         </Button>
       </form>
     </div>

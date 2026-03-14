@@ -11,7 +11,7 @@ function Page() {
   useEffect(() => {
     if (!workspacesLoading && workspaces) {
       if (workspaces.length === 0) {
-        router.push("/workspace/create", { scroll: false });
+        router.push("/get-started", { scroll: false });
       } else {
         const lastId = localStorage.getItem("lastWorkspaceId");
         const targetId =

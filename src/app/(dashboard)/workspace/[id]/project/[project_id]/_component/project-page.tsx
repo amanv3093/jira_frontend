@@ -22,6 +22,7 @@ import TaskKanban from "../../../task/_components/task-kanban";
 import TaskTable from "../../../task/_components/table/table";
 import Modal from "@/components/modal/custom-modal";
 import TaskCreateModal from "../../../task/_components/task-create-modal";
+import ProjectEditModal from "./project-edit-modal";
 
 function ProjectPage() {
   const params = useParams();
@@ -30,6 +31,7 @@ function ProjectPage() {
   console.log(project);
    const [viewMode, setViewMode] = useState("kanban");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
      const onClose = () => setIsModalOpen(false);
 
   const [filters, setFilters] = useState({
@@ -67,7 +69,7 @@ function ProjectPage() {
     <div>
       <div className="flex justify-between items-center">
         <p>{project?.name}</p>
-        <Button>Edit</Button>
+        <Button onClick={() => setIsEditOpen(true)}>Edit</Button>
       </div>
       <TaskStatsCards tasks={task || []} />
      
@@ -150,6 +152,15 @@ function ProjectPage() {
             onClose={onClose}
             members={project.members}
             projectAutoSelect={project}
+          />
+        </Modal>
+      )}
+
+      {isEditOpen && project && (
+        <Modal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)}>
+          <ProjectEditModal
+            project={project}
+            onClose={() => setIsEditOpen(false)}
           />
         </Modal>
       )}

@@ -7,6 +7,8 @@ const PROJECT_API = {
   GET: "project",
   GET_BY_ID: (id: string) => `project/${id}`,
   GET_BY_WORKSPACE_ID: (id: string) => `project/workspace/${id}`,
+  UPDATE: (id: string) => `project/${id}`,
+  DELETE: (id: string) => `project/${id}`,
 } as const;
 
 export const projectService = {
@@ -17,4 +19,8 @@ export const projectService = {
     fetchHandler<ApiResponse>(PROJECT_API.GET_BY_ID(id), "GET"),
   getProjectByWorkspaceId: (id: string) =>
     fetchHandler<ApiResponse>(PROJECT_API.GET_BY_WORKSPACE_ID(id), "GET"),
+  updateProject: (id: string, formData: FormData) =>
+    fetchHandlerWithFormData<ApiResponse>(PROJECT_API.UPDATE(id), "PUT", formData),
+  deleteProject: (id: string) =>
+    fetchHandler<ApiResponse>(PROJECT_API.DELETE(id), "DELETE"),
 };
