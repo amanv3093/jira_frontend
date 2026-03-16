@@ -17,7 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@radix-ui/react-dropdown-menu";
-import { Kanban, LayoutList, Plus } from "lucide-react";
+import { Kanban, LayoutList, Plus, Pencil } from "lucide-react";
 import TaskKanban from "../../../task/_components/task-kanban";
 import TaskTable from "../../../task/_components/table/table";
 import Modal from "@/components/modal/custom-modal";
@@ -68,8 +68,36 @@ function ProjectPage() {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <p>{project?.name}</p>
-        <Button onClick={() => setIsEditOpen(true)}>Edit</Button>
+        <div className="flex items-center gap-3">
+          {project?.profilePic ? (
+            <img
+              src={project.profilePic}
+              alt={project.name}
+              className="h-9 w-9 rounded-lg object-cover border border-border"
+            />
+          ) : (
+            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+              {project?.name?.slice(0, 1).toUpperCase()}
+            </div>
+          )}
+          <div>
+            <h1 className="text-lg font-semibold leading-tight">{project?.name}</h1>
+            {project?.description && (
+              <p className="text-xs text-muted-foreground line-clamp-1 max-w-[300px]">
+                {project.description}
+              </p>
+            )}
+          </div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsEditOpen(true)}
+          className="gap-1.5"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          Edit
+        </Button>
       </div>
       <TaskStatsCards tasks={task || []} />
      
@@ -141,7 +169,11 @@ function ProjectPage() {
       </div>
 
       {viewMode === "kanban" ? (
-        <TaskKanban data={task || []} />
+        <TaskKanban
+          data={task || []}
+          projects={project ? [project] : []}
+          members={project?.members}
+        />
       ) : (
         <TaskTable data={task || []} />
       )}

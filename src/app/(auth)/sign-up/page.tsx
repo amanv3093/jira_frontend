@@ -45,7 +45,7 @@ function SignUp() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const toast = useCustomToast();
-  const callbackUrl = searchParams.get("callbackUrl") || "/workspace";
+  const callbackUrl = searchParams.get("callbackUrl") || "/get-started";
 
   const {
     register,
@@ -61,7 +61,9 @@ function SignUp() {
       const response = await signup(data);
       if (response?.success || response?.status === 201) {
         toast.success({ message: "Account created! Please sign in." });
-        router.push(`/sign-in?${searchParams.toString()}`);
+        const signInParams = new URLSearchParams(searchParams.toString());
+        signInParams.set("callbackUrl", "/get-started");
+        router.push(`/sign-in?${signInParams.toString()}`);
       } else {
         toast.error({
           message: response?.message || "Signup failed. Please try again.",

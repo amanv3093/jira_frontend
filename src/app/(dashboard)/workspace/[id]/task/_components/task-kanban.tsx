@@ -1,10 +1,23 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Task, TaskStatus } from "@/types";
+import { Task, TaskStatus, TaskPriority, Member, Project } from "@/types";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { useUpdateTask } from "@/hooks/task";
+import { useUpdateTask, useCreateTask } from "@/hooks/task";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   Calendar,
   AlertTriangle,
@@ -15,11 +28,16 @@ import {
   CircleDashed,
   GripVertical,
   Folder,
+  Plus,
+  X,
+  Loader2,
 } from "lucide-react";
 
 interface TaskKanbanProps {
   data: Task[];
   onPersist?: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  projects?: Project[];
+  members?: Member[];
 }
 
 const STATUS_CONFIG = [
@@ -135,7 +153,23 @@ function formatDueDate(dueDate?: string | null) {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export default function TaskKanban({ data, onPersist }: TaskKanbanProps) {
+function deduplicateAssignees(assignees: any[]) {
+  const seen = new Set<string>();
+  return assignees.filter((a) => {
+    const user = a.member?.user || a.user;
+    const key = a.userId || user?.id;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+export default function TaskKanban({
+  data,
+  onPersist,
+  projects,
+  members,
+}: TaskKanbanProps) {
   const { mutate: updateTask } = useUpdateTask();
 
   const [columns, setColumns] = useState<Column[]>(
@@ -287,6 +321,13 @@ export default function TaskKanban({ data, onPersist }: TaskKanbanProps) {
                     ))}
                     {provided.placeholder}
                   </div>
+
+                  {/* Inline task creation */}
+                  <InlineTaskCreate
+                    status={col.key as TaskStatus}
+                    projects={projects}
+                    members={members}
+                  />
                 </div>
               )}
             </Droppable>
@@ -312,6 +353,8 @@ function TaskCard({
 }) {
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(task.task_name);
+  const [priorityOpen, setPriorityOpen] = useState(false);
+  const [dueDateOpen, setDueDateOpen] = useState(false);
 
   const handleSave = () => {
     if (newName.trim() && newName !== task.task_name) {
@@ -331,12 +374,26 @@ function TaskCard({
     }
   };
 
+  const handlePriorityChange = (newPriority: string) => {
+    updateTask({ id: task.id, payload: { priority: newPriority } });
+    setPriorityOpen(false);
+  };
+
+  const handleDueDateChange = (newDate: string) => {
+    updateTask({
+      id: task.id,
+      payload: { dueDate: new Date(newDate).toISOString() },
+    });
+    setDueDateOpen(false);
+  };
+
   const priority = task.priority
     ? PRIORITY_CONFIG[task.priority]
     : PRIORITY_CONFIG.MEDIUM;
   const overdue = isOverdue(task.dueDate, task.status);
   const dueDateText = formatDueDate(task.dueDate);
-  const assignees = (task as any).assignments ?? [];
+  const rawAssignees = (task as any).assignments ?? [];
+  const assignees = deduplicateAssignees(rawAssignees);
 
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -393,37 +450,88 @@ function TaskCard({
               </div>
             )}
 
-            {/* Priority + Due date row */}
+            {/* Priority + Due date row (inline editable) */}
             <div className="flex items-center gap-2 flex-wrap ml-6">
-              {/* Priority badge */}
-              {task.priority && (
-                <span
-                  className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${priority.bg} ${priority.color}`}
+              {/* Inline Priority Editor */}
+              <Popover open={priorityOpen} onOpenChange={setPriorityOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all ${priority.bg} ${priority.color}`}
+                    title="Click to change priority"
+                  >
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${priority.dot}`}
+                    />
+                    {priority.label}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-32 p-1"
+                  align="start"
+                  sideOffset={4}
                 >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${priority.dot}`}
-                  />
-                  {priority.label}
-                </span>
-              )}
+                  {Object.entries(PRIORITY_CONFIG).map(([key, config]) => (
+                    <button
+                      key={key}
+                      onClick={() => handlePriorityChange(key)}
+                      className={`w-full flex items-center gap-2 text-xs px-2 py-1.5 rounded hover:bg-muted transition-colors ${
+                        task.priority === key ? "bg-muted font-semibold" : ""
+                      }`}
+                    >
+                      <span
+                        className={`h-2 w-2 rounded-full ${config.dot}`}
+                      />
+                      <span className={config.color}>{config.label}</span>
+                    </button>
+                  ))}
+                </PopoverContent>
+              </Popover>
 
-              {/* Due date */}
-              {dueDateText && (
-                <span
-                  className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                    overdue
-                      ? "bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+              {/* Inline Due Date Editor */}
+              <Popover open={dueDateOpen} onOpenChange={setDueDateOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all ${
+                      overdue
+                        ? "bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                    title="Click to change due date"
+                  >
+                    {overdue ? (
+                      <AlertTriangle className="h-3 w-3" />
+                    ) : (
+                      <Calendar className="h-3 w-3" />
+                    )}
+                    {dueDateText || "Set date"}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto p-3"
+                  align="start"
+                  sideOffset={4}
                 >
-                  {overdue ? (
-                    <AlertTriangle className="h-3 w-3" />
-                  ) : (
-                    <Calendar className="h-3 w-3" />
-                  )}
-                  {dueDateText}
-                </span>
-              )}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      Due Date
+                    </p>
+                    <input
+                      type="datetime-local"
+                      defaultValue={
+                        task.dueDate
+                          ? new Date(task.dueDate).toISOString().slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          handleDueDateChange(e.target.value);
+                        }
+                      }}
+                      className="w-full text-sm border border-border rounded-md px-2 py-1.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
 
             {/* Footer: assignees */}
@@ -435,7 +543,7 @@ function TaskCard({
                     const name = user?.full_name || "U";
                     return (
                       <Avatar
-                        key={a.id || i}
+                        key={a.userId || a.id || i}
                         className="h-6 w-6 border-2 border-background"
                       >
                         {user?.avatarUrl ? (
@@ -467,5 +575,162 @@ function TaskCard({
         </div>
       )}
     </Draggable>
+  );
+}
+
+/* ─── Inline Task Create Component ─── */
+
+function InlineTaskCreate({
+  status,
+  projects,
+  members,
+}: {
+  status: TaskStatus;
+  projects?: Project[];
+  members?: Member[];
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [taskName, setTaskName] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [assigneeId, setAssigneeId] = useState("");
+  const { mutate: createTask, isPending } = useCreateTask();
+
+  const handleSubmit = () => {
+    if (!taskName.trim() || !projectId) return;
+
+    const payload: any = {
+      task_name: taskName.trim(),
+      status,
+      priority: TaskPriority.MEDIUM,
+      dueDate: new Date(
+        Date.now() + 7 * 24 * 60 * 60 * 1000
+      ).toISOString(),
+      projectId,
+      assignments: assigneeId
+        ? [{ userId: assigneeId, assignedAt: new Date().toISOString() }]
+        : [],
+    };
+
+    createTask(payload, {
+      onSuccess: () => {
+        setTaskName("");
+        setProjectId("");
+        setAssigneeId("");
+        setIsOpen(false);
+      },
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+    if (e.key === "Escape") {
+      setIsOpen(false);
+      setTaskName("");
+      setProjectId("");
+      setAssigneeId("");
+    }
+  };
+
+  // Deduplicate members by userId
+  const uniqueMembers = members
+    ? (() => {
+        const seen = new Set<string>();
+        return members.filter((m) => {
+          if (seen.has(m.userId)) return false;
+          seen.add(m.userId);
+          return true;
+        });
+      })()
+    : [];
+
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-1 mx-2 mb-2 px-2 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        Add task
+      </button>
+    );
+  }
+
+  return (
+    <div className="mx-2 mb-2 p-2.5 rounded-lg border border-border bg-background shadow-sm space-y-2">
+      <input
+        autoFocus
+        value={taskName}
+        onChange={(e) => setTaskName(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Task name..."
+        className="w-full text-sm border border-border rounded-md px-2 py-1.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+      />
+
+      <Select onValueChange={setProjectId} value={projectId || undefined}>
+        <SelectTrigger className="h-8 text-xs">
+          <SelectValue placeholder="Select project" />
+        </SelectTrigger>
+        <SelectContent position="popper" className="z-[100]">
+          {projects && projects.length > 0 ? (
+            projects.map((p) => (
+              <SelectItem key={p.id} value={p.id}>
+                {p.name}
+              </SelectItem>
+            ))
+          ) : (
+            <div className="px-2 py-1.5 text-xs text-muted-foreground">
+              No projects available
+            </div>
+          )}
+        </SelectContent>
+      </Select>
+
+      <Select onValueChange={setAssigneeId} value={assigneeId || undefined}>
+        <SelectTrigger className="h-8 text-xs">
+          <SelectValue placeholder="Assignee (optional)" />
+        </SelectTrigger>
+        <SelectContent position="popper" className="z-[100]">
+          {uniqueMembers.length > 0 ? (
+            uniqueMembers.map((m) => (
+              <SelectItem key={m.userId} value={m.userId}>
+                {m.user?.full_name}
+              </SelectItem>
+            ))
+          ) : (
+            <div className="px-2 py-1.5 text-xs text-muted-foreground">
+              No members available
+            </div>
+          )}
+        </SelectContent>
+      </Select>
+
+      <div className="flex items-center gap-1.5">
+        <button
+          onClick={handleSubmit}
+          disabled={!taskName.trim() || !projectId || isPending}
+          className="flex-1 flex items-center justify-center gap-1 text-xs font-medium px-2 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {isPending ? (
+            <Loader2 className="h-3 w-3 animate-spin" />
+          ) : (
+            "Add"
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setIsOpen(false);
+            setTaskName("");
+            setProjectId("");
+            setAssigneeId("");
+          }}
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
   );
 }

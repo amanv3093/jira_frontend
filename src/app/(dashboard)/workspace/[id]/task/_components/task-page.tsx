@@ -159,7 +159,11 @@ function TaskPage() {
       </div>
 
       {viewMode === "kanban" ? (
-        <TaskKanban data={task || []} />
+        <TaskKanban
+          data={task || []}
+          projects={workspaceData?.projects}
+          members={workspaceData?.members}
+        />
       ) : (
         <TaskTable data={task || []} />
       )}

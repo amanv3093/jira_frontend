@@ -113,13 +113,13 @@ export default function TaskFilters({
 
     return (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-muted data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
+        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-muted data-[state=open]:bg-blue-100 data-[state=open]:dark:bg-blue-900/40 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
           <div className="flex items-center gap-2">
             {" "}
             {Icon && <Icon size={14} className="" />} <span>{title}</span>{" "}
           </div>
           {selected.length > 0 && (
-            <span className="bg-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
+            <span className="bg-blue-200 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
               {selected.length}
             </span>
           )}
@@ -156,7 +156,7 @@ export default function TaskFilters({
                     );
                   }}
                   className={`flex justify-between items-center px-2 py-1 text-sm rounded hover:bg-muted ${
-                    selected.includes(item.key) ? "bg-blue-100" : ""
+                    selected.includes(item.key) ? "bg-blue-100 dark:bg-blue-900/40 text-foreground" : ""
                   } outline-none focus:outline-none focus:ring-0 border-none cursor-pointer`}
                 >
                   {item.label}
@@ -185,13 +185,13 @@ export default function TaskFilters({
 
     return (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-muted data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
+        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-muted data-[state=open]:bg-blue-100 data-[state=open]:dark:bg-blue-900/40 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
           <div className="flex items-center gap-2">
             <Folder size={14} />
             <span>Project</span>{" "}
           </div>
           {selectedProjects.length > 0 && (
-            <span className="bg-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
+            <span className="bg-blue-200 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
               {selectedProjects.length}
             </span>
           )}
@@ -227,7 +227,7 @@ export default function TaskFilters({
                     );
                   }}
                   className={`flex justify-between items-center px-2 py-1 text-sm rounded hover:bg-muted ${
-                    selectedProjects.includes(p.id) ? "bg-blue-100" : ""
+                    selectedProjects.includes(p.id) ? "bg-blue-100 dark:bg-blue-900/40 text-foreground" : ""
                   } outline-none focus:outline-none focus:ring-0 border-none cursor-pointer`}
                 >
                   {p.name}
@@ -256,13 +256,13 @@ export default function TaskFilters({
 
     return (
       <DropdownMenuSub>
-        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-muted data-[state=open]:bg-blue-100 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
+        <DropdownMenuSubTrigger className="text-sm py-1 px-2 flex justify-between cursor-pointer select-none hover:bg-muted data-[state=open]:bg-blue-100 data-[state=open]:dark:bg-blue-900/40 data-[state=open]:border-l-2 data-[state=open]:border-info outline-none">
           <div className="flex items-center gap-2">
             <UserPlus size={14} />
             <span>Assignee</span>
           </div>
           {selectedUsers.length > 0 && (
-            <span className="bg-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
+            <span className="bg-blue-200 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 text-xs px-3 flex justify-center items-center font-normal w-[30px]">
               {selectedUsers.length}
             </span>
           )}
@@ -300,8 +300,8 @@ export default function TaskFilters({
                         : [...prev, m.user.id]
                     );
                   }}
-                  className={`flex justify-between items-center px-2 py-1 text-sm rounded hover:bg-muted  ${
-                    selectedUsers.includes(m.user.id) ? "bg-blue-100" : ""
+                  className={`flex justify-between items-center px-2 py-1 text-sm rounded hover:bg-muted ${
+                    selectedUsers.includes(m.user.id) ? "bg-blue-100 dark:bg-blue-900/40 text-foreground" : ""
                   } outline-none focus:outline-none focus:ring-0 border-none cursor-pointer`}
                 >
                   {m.user.full_name}
@@ -347,7 +347,7 @@ export default function TaskFilters({
             variant="outline"
             className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 ${
               totalActiveFilters > 0
-                ? "border-info bg-blue-100 text-info"
+                ? "border-info bg-blue-100 dark:bg-blue-900/40 text-info"
                 : "border-border text-foreground"
             }`}
           >
@@ -356,7 +356,7 @@ export default function TaskFilters({
             />
             Filter
             {totalActiveFilters > 0 && (
-              <span className="bg-blue-400 ml-1 text-xs text-foreground px-2 rounded-sm flex justify-center items-center font-medium">
+              <span className="bg-blue-400 dark:bg-blue-700 ml-1 text-xs text-white px-2 rounded-sm flex justify-center items-center font-medium">
                 {totalActiveFilters}
               </span>
             )}

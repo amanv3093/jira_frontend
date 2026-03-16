@@ -8,6 +8,7 @@ import {
   Layers,
   Users,
   User,
+  CreditCard,
 } from "lucide-react";
 
 export interface NavLink {
@@ -40,6 +41,7 @@ export  const getWorkspaceLinks = (workspaceId: string): SideLink[] => [
   { title: "Profile", href: `/workspace/${workspaceId}/profile`, icon: <User size={18} /> },
   { title: "Settings", href: `/workspace/${workspaceId}/settings`, icon: <Settings size={18} /> },
   { title: "Members", href: `/workspace/${workspaceId}/member`, icon: <Users size={18} /> },
+  { title: "Plan & Billing", href: `/workspace/${workspaceId}/billing`, icon: <CreditCard size={18} /> },
 ];
 
 
