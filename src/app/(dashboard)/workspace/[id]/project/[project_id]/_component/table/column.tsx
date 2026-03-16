@@ -2,7 +2,7 @@
 import { Task, TaskStatus } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import TaskAction from "./action";
-import AssigneeEditor from "../../../task/_components/assignee-editor";
+import AssigneeEditor from "../../../../task/_components/assignee-editor";
 import { UserPlus } from "lucide-react";
 
 export const Columns: ColumnDef<Task>[] = [
