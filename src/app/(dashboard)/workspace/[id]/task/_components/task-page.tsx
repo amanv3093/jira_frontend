@@ -86,24 +86,20 @@ function TaskPage() {
   // });
   console.log("filters", filters);
   return (
-    <div>
-      <div className="flex justify-between items-center">
-        <p>Task Page</p>
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <p className="text-lg font-semibold">Task Page</p>
       </div>
       <TaskStatsCards tasks={task || []} />
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <FormProvider {...methods}>
-          <div>
-            <FormProvider {...methods}>
-              <TaskFilters
-                onFilterChange={setFilters}
-                project={workspaceData?.projects}
-                members={workspaceData?.members}
-              />
-            </FormProvider>
-          </div>
+          <TaskFilters
+            onFilterChange={setFilters}
+            project={workspaceData?.projects}
+            members={workspaceData?.members}
+          />
         </FormProvider>
-        <div className="flex gap-1">
+        <div className="flex gap-1 shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -150,10 +146,10 @@ function TaskPage() {
           <Button
             variant="outline"
             onClick={() => setIsModalOpen(true)}
-            className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 order-gray-300 text-foreground`}
+            className={`!py-1 !h-[30px] !rounded-none font-normal flex items-center gap-1 border-border text-foreground`}
           >
             <Plus />
-            Create
+            <span className="hidden sm:inline">Create</span>
           </Button>
         </div>
       </div>

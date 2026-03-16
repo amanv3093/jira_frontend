@@ -49,12 +49,12 @@ const Modal: React.FC<ModalProps> = ({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 backdrop-blur-sm p-4 sm:p-6 md:p-8 animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-end sm:items-start justify-center overflow-y-auto bg-black/50 backdrop-blur-sm p-0 sm:p-6 md:p-8 animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
         className={cn(
-          "relative w-full max-w-lg my-8 rounded-lg border border-border bg-background shadow-xl animate-in zoom-in-95 slide-in-from-bottom-2 duration-200",
+          "relative w-full max-w-lg sm:my-8 rounded-t-xl sm:rounded-lg border border-border bg-background shadow-xl animate-in zoom-in-95 slide-in-from-bottom-2 duration-200 max-h-[90vh] sm:max-h-none overflow-y-auto",
           className
         )}
         onClick={(e) => e.stopPropagation()}

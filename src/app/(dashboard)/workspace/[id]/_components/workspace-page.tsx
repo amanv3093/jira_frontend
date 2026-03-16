@@ -186,7 +186,7 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-[1400px] mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
@@ -389,7 +389,7 @@ export default function Dashboard() {
                 {recentTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors gap-2"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -417,7 +417,7 @@ export default function Dashboard() {
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 ml-3 shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                       {task.assignees.length > 0 && (
                         <div className="flex -space-x-2">
                           {task.assignees.slice(0, 3).map((a) => (
@@ -647,7 +647,7 @@ function EmptyState({ message }: { message: string }) {
 
 function DashboardSkeleton() {
   return (
-    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-[1400px] mx-auto">
       <div>
         <Skeleton className="h-8 w-40" />
         <Skeleton className="h-4 w-72 mt-2" />

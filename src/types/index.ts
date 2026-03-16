@@ -122,6 +122,28 @@ export interface DashboardProject {
   };
 }
 
+export enum SprintStatus {
+  PLANNING = "PLANNING",
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+}
+
+export interface Sprint {
+  id: string;
+  name: string;
+  description?: string;
+  status: SprintStatus;
+  startDate: string;
+  endDate: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  project?: Project;
+  tasks?: Task[];
+  _count?: { tasks: number };
+  taskStatusBreakdown?: Record<string, number>;
+}
+
 export interface DashboardData {
   projectStats: {
     total: number;

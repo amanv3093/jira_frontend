@@ -326,8 +326,8 @@ export default function TaskFilters({
   };
 
   return (
-    <div className="flex gap-2">
-      <div className="relative w-[200px]">
+    <div className="flex flex-wrap gap-2">
+      <div className="relative w-full sm:w-[200px]">
         {/* Search Icon */}
         <div className="absolute left-0 top-[50%] transform -translate-y-1/2 pl-3 pointer-events-none">
           <Search size={16} className="text-muted-foreground " />

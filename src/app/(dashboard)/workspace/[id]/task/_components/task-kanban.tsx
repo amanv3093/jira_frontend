@@ -268,7 +268,7 @@ export default function TaskKanban({
   };
 
   return (
-    <div className="flex gap-3 overflow-x-auto py-4 pb-8">
+    <div className="flex gap-3 overflow-x-auto py-4 pb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
       <DragDropContext onDragEnd={onDragEnd}>
         {columns.map((col) => {
           const StatusIcon = col.icon;

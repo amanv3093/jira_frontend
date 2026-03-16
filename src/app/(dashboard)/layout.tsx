@@ -53,7 +53,7 @@ export default function RootLayout({
       <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       <main
         id="content"
-        className={`overflow-x-hidden pt-16 transition-[margin] duration-200 ease-out md:overflow-y-hidden md:pt-0 ${
+        className={`overflow-x-hidden pt-14 transition-[margin] duration-200 ease-out md:overflow-y-auto md:pt-0 ${
           isCollapsed ? "md:ml-[52px]" : "md:ml-[260px]"
         } h-full`}
       >

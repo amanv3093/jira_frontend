@@ -98,7 +98,7 @@ const WorkspaceSelector = ({ workspaces, currentWorkspaceId, onSelect }: Props) 
 
       {/* Switch Workspace Dialog */}
       <Dialog open={isSwitchModalOpen} onOpenChange={setIsSwitchModalOpen}>
-        <DialogContent className="sm:max-w-[420px] gap-0 p-0">
+        <DialogContent className="sm:max-w-[420px] gap-0 p-0 z-[200] max-h-[85vh] overflow-hidden">
           <DialogHeader className="px-5 pt-5 pb-4">
             <DialogTitle>Switch Workspace</DialogTitle>
             <DialogDescription>

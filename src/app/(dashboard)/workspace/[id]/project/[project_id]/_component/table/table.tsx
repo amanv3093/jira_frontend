@@ -53,8 +53,8 @@ export default function ProjectTable({ data}: ProjectTableProps) {
 
   return (
     <FormProvider {...formMethods}>
-      {/* <TaskFilters allAssignees={allAssignees} allProjects={allProjects} /> */}
-      <Table className="mt-4">
+      <div className="mt-4 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+      <Table className="min-w-[600px]">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -78,6 +78,7 @@ export default function ProjectTable({ data}: ProjectTableProps) {
           ))}
         </TableBody>
       </Table>
+      </div>
     </FormProvider>
   );
 }

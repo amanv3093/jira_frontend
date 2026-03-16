@@ -67,23 +67,23 @@ function ProjectPage() {
   }
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {project?.profilePic ? (
             <img
               src={project.profilePic}
               alt={project.name}
-              className="h-9 w-9 rounded-lg object-cover border border-border"
+              className="h-9 w-9 rounded-lg object-cover border border-border shrink-0"
             />
           ) : (
-            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
+            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary shrink-0">
               {project?.name?.slice(0, 1).toUpperCase()}
             </div>
           )}
-          <div>
-            <h1 className="text-lg font-semibold leading-tight">{project?.name}</h1>
+          <div className="min-w-0">
+            <h1 className="text-lg font-semibold leading-tight truncate">{project?.name}</h1>
             {project?.description && (
-              <p className="text-xs text-muted-foreground line-clamp-1 max-w-[300px]">
+              <p className="text-xs text-muted-foreground line-clamp-1">
                 {project.description}
               </p>
             )}
@@ -93,27 +93,22 @@ function ProjectPage() {
           variant="outline"
           size="sm"
           onClick={() => setIsEditOpen(true)}
-          className="gap-1.5"
+          className="gap-1.5 shrink-0 w-fit"
         >
           <Pencil className="h-3.5 w-3.5" />
           Edit
         </Button>
       </div>
       <TaskStatsCards tasks={task || []} />
-     
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <FormProvider {...methods}>
-          <div>
-            <FormProvider {...methods}>
-              <TaskFilters
-                onFilterChange={setFilters}
-                members={project?.members}
-              />
-            </FormProvider>
-          </div>
+          <TaskFilters
+            onFilterChange={setFilters}
+            members={project?.members}
+          />
         </FormProvider>
-        <div className="flex gap-1">
+        <div className="flex gap-1 shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
