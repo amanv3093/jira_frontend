@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -112,52 +112,105 @@ function SignUp() {
             <rect width="100%" height="100%" fill="url(#signup-dots)" />
           </svg>
         </div>
-        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-          <div className="flex items-center gap-3 mb-8">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="h-12 w-auto brightness-0 invert"
-            />
-          </div>
+        <div className="relative z-10 flex flex-col justify-center px-16 text-white w-full">
           <h1 className="text-4xl font-bold leading-tight mb-4">
             Start building
             <br />
             amazing projects
           </h1>
-          <p className="text-lg text-white/70 max-w-md">
-            Join thousands of teams using our platform to plan, track, and
-            deliver great work.
+          <p className="text-lg text-white/70 max-w-md mb-12">
+            A personal project management tool to help you plan, track, and
+            organize your work efficiently.
           </p>
-          <div className="mt-12 grid grid-cols-3 gap-6">
-            <div>
-              <p className="text-3xl font-bold">10K+</p>
-              <p className="text-sm text-white/60 mt-1">Active Teams</p>
+
+          {/* Animated Feature Cards */}
+          <div className="relative w-full max-w-md space-y-3">
+            {/* Feature card 1 */}
+            <div className="flex items-center gap-4 rounded-xl bg-white/10 backdrop-blur-sm p-4 border border-white/10 animate-[slideInLeft_0.8s_ease-out_both]">
+              <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-indigo-400/30 flex items-center justify-center">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Task Management</p>
+                <div className="mt-1.5 h-1.5 w-full rounded-full bg-white/10">
+                  <div className="h-1.5 rounded-full bg-indigo-400/50 animate-[progressGrow_3s_ease-in-out_infinite]" style={{ width: "80%" }} />
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold">50M+</p>
-              <p className="text-sm text-white/60 mt-1">Tasks Managed</p>
+
+            {/* Feature card 2 */}
+            <div className="flex items-center gap-4 rounded-xl bg-white/10 backdrop-blur-sm p-4 border border-white/10 animate-[slideInLeft_0.8s_ease-out_0.2s_both]">
+              <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-violet-400/30 flex items-center justify-center">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Kanban Boards</p>
+                <p className="text-xs text-white/50 mt-0.5">Drag & drop workflow</p>
+              </div>
+              <div className="flex -space-x-1">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="h-6 w-6 rounded-full border border-white/20 bg-white/10 animate-[popIn_0.5s_ease-out_both]"
+                    style={{ animationDelay: `${1 + i * 0.15}s` }}
+                  />
+                ))}
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold">99.9%</p>
-              <p className="text-sm text-white/60 mt-1">Uptime</p>
+
+            {/* Feature card 3 */}
+            <div className="flex items-center gap-4 rounded-xl bg-white/10 backdrop-blur-sm p-4 border border-white/10 animate-[slideInLeft_0.8s_ease-out_0.4s_both]">
+              <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-purple-400/30 flex items-center justify-center">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Sprint Planning</p>
+                <p className="text-xs text-white/50 mt-0.5">Organize work into sprints</p>
+              </div>
+              <svg className="h-5 w-5 text-green-400 animate-[checkPop_2s_ease-in-out_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+
+            {/* Floating activity indicator */}
+            <div className="absolute -top-4 -right-4 rounded-full bg-white/15 backdrop-blur-sm px-3 py-1.5 border border-white/15 animate-bounce [animation-duration:3s]">
+              <div className="flex items-center gap-1.5">
+                <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+                <p className="text-xs font-medium">Active</p>
+              </div>
             </div>
           </div>
         </div>
+
+        <style jsx>{`
+          @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-24px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+          @keyframes progressGrow {
+            0%, 100% { width: 60%; }
+            50% { width: 90%; }
+          }
+          @keyframes popIn {
+            from { opacity: 0; transform: scale(0); }
+            to { opacity: 1; transform: scale(1); }
+          }
+          @keyframes checkPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+          }
+        `}</style>
       </div>
 
       {/* Right - Form Panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
         <div className="w-full max-w-[420px] space-y-6">
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-4">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="h-10 w-auto"
-            />
-          </div>
-
           <div>
             <h2 className="text-2xl font-bold tracking-tight">
               Create an account

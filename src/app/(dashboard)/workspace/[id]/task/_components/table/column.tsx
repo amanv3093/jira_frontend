@@ -2,6 +2,8 @@
 import { Task, TaskStatus } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import TaskAction from "./action";
+import AssigneeEditor from "../assignee-editor";
+import { UserPlus } from "lucide-react";
 
 export const Columns: ColumnDef<Task>[] = [
   {
@@ -16,11 +18,25 @@ export const Columns: ColumnDef<Task>[] = [
   {
     accessorKey: "assignments",
     header: "Assignees",
-    cell: ({ getValue }) => {
-      const assignments = getValue<any[]>() || [];
-      return assignments
-        .map((a) => a.member?.user?.full_name || "Unknown")
+    cell: ({ row }) => {
+      const task = row.original;
+      const assignments = task.assignments || [];
+      const names = assignments
+        .map((a: any) => a.member?.user?.full_name || "Unknown")
         .join(", ");
+
+      return (
+        <AssigneeEditor taskId={task.id} assignments={assignments}>
+          {assignments.length > 0 ? (
+            <span className="text-sm">{names}</span>
+          ) : (
+            <span className="text-sm text-muted-foreground flex items-center gap-1">
+              <UserPlus className="h-3.5 w-3.5" />
+              Assign
+            </span>
+          )}
+        </AssigneeEditor>
+      );
     },
   },
   {

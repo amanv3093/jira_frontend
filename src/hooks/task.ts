@@ -40,6 +40,7 @@ export const useCreateTask = () => {
     onSuccess: (data) => {
       toast.success("Task created successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
+      queryClient.invalidateQueries({ queryKey: ["getDashboard"] });
     },
     onError: (error: unknown) => {
       const message =
@@ -89,6 +90,7 @@ export const useUpdateTask = () => {
       toast.success("Task updated successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByProjectId"] });
+      queryClient.invalidateQueries({ queryKey: ["getDashboard"] });
     },
     onError: (error: unknown) => {
       const message =
@@ -109,6 +111,7 @@ export const useDeleteTask = () => {
       toast.success("Task deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByWorkspaceId"] });
       queryClient.invalidateQueries({ queryKey: ["getAllTaskByProjectId"] });
+      queryClient.invalidateQueries({ queryKey: ["getDashboard"] });
     },
     onError: (error: unknown) => {
       const message =

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import Image from "next/image";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -101,51 +101,112 @@ const SignInForm = () => {
             <rect width="100%" height="100%" fill="url(#signin-grid)" />
           </svg>
         </div>
-        <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-          <div className="flex items-center gap-3 mb-8">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="h-12 w-auto brightness-0 invert"
-            />
-          </div>
+        <div className="relative z-10 flex flex-col justify-center px-16 text-white w-full">
           <h1 className="text-4xl font-bold leading-tight mb-4">
             Welcome back to
             <br />
             your workspace
           </h1>
-          <p className="text-lg text-white/70 max-w-md">
-            Manage your projects, collaborate with your team, and ship faster
-            than ever.
+          <p className="text-lg text-white/70 max-w-md mb-12">
+            A personal project management tool to plan, track, and organize
+            your work.
           </p>
-          <div className="mt-12 flex items-center gap-6">
-            <div className="flex -space-x-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="h-10 w-10 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-sm"
-                />
-              ))}
+
+          {/* Animated Kanban Board Illustration */}
+          <div className="relative w-full max-w-md">
+            {/* Board columns */}
+            <div className="flex gap-3">
+              {/* To Do Column */}
+              <div className="flex-1 rounded-xl bg-white/10 backdrop-blur-sm p-3 border border-white/10">
+                <p className="text-xs font-semibold text-white/80 mb-3">To Do</p>
+                <div className="space-y-2">
+                  <div className="rounded-lg bg-white/15 p-2.5 animate-[fadeSlideDown_3s_ease-in-out_infinite]">
+                    <div className="h-2 w-3/4 rounded bg-white/30" />
+                    <div className="h-2 w-1/2 rounded bg-white/20 mt-1.5" />
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <div className="h-4 w-4 rounded-full bg-blue-400/40" />
+                      <div className="h-1.5 w-8 rounded bg-white/20" />
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white/10 p-2.5 animate-[fadeSlideDown_3s_ease-in-out_infinite_0.5s]">
+                    <div className="h-2 w-full rounded bg-white/20" />
+                    <div className="h-2 w-2/3 rounded bg-white/15 mt-1.5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* In Progress Column */}
+              <div className="flex-1 rounded-xl bg-white/10 backdrop-blur-sm p-3 border border-white/10">
+                <p className="text-xs font-semibold text-white/80 mb-3">In Progress</p>
+                <div className="space-y-2">
+                  <div className="rounded-lg bg-white/15 p-2.5 animate-[fadeSlideDown_3s_ease-in-out_infinite_1s]">
+                    <div className="h-2 w-full rounded bg-white/30" />
+                    <div className="h-2 w-1/3 rounded bg-white/20 mt-1.5" />
+                    <div className="mt-2 h-1.5 w-full rounded-full bg-white/10">
+                      <div className="h-1.5 w-3/5 rounded-full bg-yellow-400/50 animate-[progressBar_4s_ease-in-out_infinite]" />
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-white/10 p-2.5 animate-[fadeSlideDown_3s_ease-in-out_infinite_1.5s]">
+                    <div className="h-2 w-2/3 rounded bg-white/20" />
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <div className="h-4 w-4 rounded-full bg-green-400/40" />
+                      <div className="h-1.5 w-10 rounded bg-white/20" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Done Column */}
+              <div className="flex-1 rounded-xl bg-white/10 backdrop-blur-sm p-3 border border-white/10">
+                <p className="text-xs font-semibold text-white/80 mb-3">Done</p>
+                <div className="space-y-2">
+                  <div className="rounded-lg bg-white/15 p-2.5 animate-[fadeSlideDown_3s_ease-in-out_infinite_2s]">
+                    <div className="flex items-center gap-2">
+                      <svg className="h-4 w-4 text-green-400 animate-[checkPop_2s_ease-in-out_infinite]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <div className="h-2 w-full rounded bg-white/20 line-through" />
+                    </div>
+                    <div className="h-2 w-1/2 rounded bg-white/15 mt-1.5 ml-6" />
+                  </div>
+                  <div className="rounded-lg bg-white/10 p-2.5 animate-[fadeSlideDown_3s_ease-in-out_infinite_2.5s]">
+                    <div className="flex items-center gap-2">
+                      <svg className="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <div className="h-2 w-3/4 rounded bg-white/20" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-white/60">
-              Trusted by 10,000+ teams worldwide
-            </p>
+
+            {/* Floating notification badge */}
+            <div className="absolute -top-4 -right-4 rounded-full bg-white/20 backdrop-blur-sm px-3 py-1.5 border border-white/20 animate-bounce [animation-duration:3s]">
+              <p className="text-xs font-medium">3 tasks completed</p>
+            </div>
           </div>
         </div>
+
+        <style jsx>{`
+          @keyframes fadeSlideDown {
+            0%, 100% { opacity: 0.7; transform: translateY(-4px); }
+            50% { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes progressBar {
+            0%, 100% { width: 40%; }
+            50% { width: 75%; }
+          }
+          @keyframes checkPop {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+          }
+        `}</style>
       </div>
 
       {/* Right - Form Panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background">
         <div className="w-full max-w-[420px] space-y-8">
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-4">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="h-10 w-auto"
-            />
-          </div>
-
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Sign in</h2>
             <p className="text-sm text-muted-foreground mt-1">
