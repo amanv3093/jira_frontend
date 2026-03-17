@@ -21,9 +21,12 @@ const montserrat = Montserrat({
 
 
 export const metadata: Metadata = {
-  title: "jira",
-  description: "jira",
-  icons: { icon: "/c6b885d4b2b859ec4d0620df05d36a.png" },
+  title: {
+    default: "Jira",
+    template: "%s | Jira",
+  },
+  description: "Jira - Project Management",
+  icons: { icon: "/logo.png" },
 };
 
 export default function RootLayout({
