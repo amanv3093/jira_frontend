@@ -21,7 +21,14 @@ export const Columns: ColumnDef<Task>[] = [
     cell: ({ row }) => {
       const task = row.original;
       const assignments = task.assignments || [];
-      const names = assignments
+      const seen = new Set<string>();
+      const unique = assignments.filter((a: any) => {
+        const uid = a.userId ?? a.member?.userId;
+        if (!uid || seen.has(uid)) return false;
+        seen.add(uid);
+        return true;
+      });
+      const names = unique
         .map((a: any) => a.member?.user?.full_name || "Unknown")
         .join(", ");
 

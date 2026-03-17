@@ -27,12 +27,20 @@ export default function AssigneeEditor({
   const [open, setOpen] = useState(false);
   const params = useParams();
   const workspaceId = params?.id as string;
-  const { data: members = [] } = useGetMemberByWorkspaceId(workspaceId);
+  const { data: rawMembers = [] } = useGetMemberByWorkspaceId(workspaceId);
   const updateTask = useUpdateTask();
 
-  const currentAssigneeIds = (assignments || []).map(
-    (a) => a.userId ?? a.member?.userId
+  // Deduplicate members by userId
+  const members = rawMembers.filter(
+    (m, i, arr) => arr.findIndex((x) => x.userId === m.userId) === i
   );
+
+  // Deduplicate assignee IDs
+  const currentAssigneeIds = [
+    ...new Set(
+      (assignments || []).map((a: any) => a.userId ?? a.member?.userId)
+    ),
+  ];
 
   const toggleAssignee = (userId: string) => {
     const isAssigned = currentAssigneeIds.includes(userId);

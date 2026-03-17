@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, Check } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
@@ -218,33 +218,81 @@ const TaskCreateModal = ({
 
         {/* Assignments */}
         <div>
-          <Label>Assign Users</Label>
+          <Label>Assign Members</Label>
           <Controller
             control={control}
             name="assignments"
-            render={({ field }) => (
-              <Select
-                onValueChange={(val) =>
+            render={({ field }) => {
+              const selectedIds = (field.value || []).map(
+                (a: any) => a.userId
+              );
+              const uniqueMembers = members?.filter(
+                (m, i, arr) =>
+                  arr.findIndex((x) => x.userId === m.userId) === i
+              );
+
+              const toggle = (userId: string) => {
+                if (selectedIds.includes(userId)) {
                   field.onChange(
-                    val
-                      ? [{ userId: val, assignedAt: new Date().toISOString() }]
-                      : []
-                  )
+                    field.value.filter((a: any) => a.userId !== userId)
+                  );
+                } else {
+                  field.onChange([
+                    ...field.value,
+                    {
+                      userId,
+                      assignedAt: new Date().toISOString(),
+                    },
+                  ]);
                 }
-                value={field.value?.[0]?.userId || ""}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select user" />
-                </SelectTrigger>
-                <SelectContent>
-                  {members?.map((member) => (
-                    <SelectItem key={member.userId} value={member.userId}>
-                      {member.user?.full_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+              };
+
+              return (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {uniqueMembers && uniqueMembers.length > 0 ? (
+                    uniqueMembers.map((member) => {
+                      const isSelected = selectedIds.includes(member.userId);
+                      return (
+                        <button
+                          type="button"
+                          key={member.userId}
+                          onClick={() => toggle(member.userId)}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors text-sm ${
+                            isSelected
+                              ? "bg-primary/10"
+                              : "hover:bg-muted"
+                          }`}
+                        >
+                          <div className="flex-shrink-0 h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-medium overflow-hidden">
+                            {member.user?.avatarUrl ? (
+                              <img
+                                src={member.user.avatarUrl}
+                                alt={member.user.full_name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              member.user?.full_name
+                                ?.charAt(0)
+                                ?.toUpperCase() || "?"
+                            )}
+                          </div>
+                          <span className="flex-1 truncate">
+                            {member.user?.full_name}
+                          </span>
+                          {isSelected && (
+                            <Check className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p className="text-xs text-muted-foreground text-center py-3">
+                      No members available
+                    </p>
+                  )}
+                </div>
+              );
+            }}
           />
           {errors.assignments && (
             <p className="text-sm text-red-500 mt-1">

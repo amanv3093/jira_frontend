@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Task, TaskStatus, TaskPriority, Member, Project } from "@/types";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { useUpdateTask, useCreateTask } from "@/hooks/task";
+import { useUpdateTask, useCreateTask, useDeleteTask } from "@/hooks/task";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Popover,
@@ -31,7 +31,11 @@ import {
   Plus,
   X,
   Loader2,
+  UserPlus,
+  Check,
+  Trash2,
 } from "lucide-react";
+import AssigneeEditor from "./assignee-editor";
 
 interface TaskKanbanProps {
   data: Task[];
@@ -355,6 +359,8 @@ function TaskCard({
   const [newName, setNewName] = useState(task.task_name);
   const [priorityOpen, setPriorityOpen] = useState(false);
   const [dueDateOpen, setDueDateOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const deleteTask = useDeleteTask();
 
   const handleSave = () => {
     if (newName.trim() && newName !== task.task_name) {
@@ -408,7 +414,7 @@ function TaskCard({
           }`}
         >
           <div className="p-3 space-y-2.5">
-            {/* Drag handle + task name row */}
+            {/* Drag handle + task name + delete row */}
             <div className="flex items-start gap-2">
               <div
                 {...dragProvided.dragHandleProps}
@@ -438,6 +444,36 @@ function TaskCard({
                   </p>
                 )}
               </div>
+
+              {!confirmDelete ? (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-950"
+                  title="Delete task"
+                >
+                  <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-red-500" />
+                </button>
+              ) : (
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    onClick={() => {
+                      deleteTask.mutate(task.id, {
+                        onSuccess: () => setConfirmDelete(false),
+                      });
+                    }}
+                    disabled={deleteTask.isPending}
+                    className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-500 text-white hover:bg-red-600 transition-colors"
+                  >
+                    {deleteTask.isPending ? "..." : "Delete"}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="p-0.5 rounded hover:bg-muted"
+                  >
+                    <X className="h-3 w-3 text-muted-foreground" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Project name */}
@@ -535,42 +571,52 @@ function TaskCard({
             </div>
 
             {/* Footer: assignees */}
-            {assignees.length > 0 && (
-              <div className="flex items-center justify-between ml-6 pt-1 border-t border-border/50">
-                <div className="flex -space-x-1.5">
-                  {assignees.slice(0, 3).map((a: any, i: number) => {
-                    const user = a.member?.user || a.user;
-                    const name = user?.full_name || "U";
-                    return (
-                      <Avatar
-                        key={a.userId || a.id || i}
-                        className="h-6 w-6 border-2 border-background"
-                      >
-                        {user?.avatarUrl ? (
-                          <AvatarImage src={user.avatarUrl} alt={name} />
-                        ) : null}
-                        <AvatarFallback className="text-[9px] font-semibold bg-muted">
-                          {getInitials(name)}
-                        </AvatarFallback>
-                      </Avatar>
-                    );
-                  })}
-                  {assignees.length > 3 && (
-                    <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
-                      <span className="text-[9px] font-semibold text-muted-foreground">
-                        +{assignees.length - 3}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {task.id && (
-                  <span className="text-[10px] text-muted-foreground font-mono">
-                    #{task.id.slice(-4)}
+            <div className="flex items-center justify-between ml-6 pt-1 border-t border-border/50">
+              <AssigneeEditor
+                taskId={task.id}
+                assignments={rawAssignees}
+              >
+                {assignees.length > 0 ? (
+                  <div className="flex -space-x-1.5">
+                    {assignees.slice(0, 3).map((a: any, i: number) => {
+                      const user = a.member?.user || a.user;
+                      const name = user?.full_name || "U";
+                      return (
+                        <Avatar
+                          key={a.userId || a.id || i}
+                          className="h-6 w-6 border-2 border-background"
+                        >
+                          {user?.avatarUrl ? (
+                            <AvatarImage src={user.avatarUrl} alt={name} />
+                          ) : null}
+                          <AvatarFallback className="text-[9px] font-semibold bg-muted">
+                            {getInitials(name)}
+                          </AvatarFallback>
+                        </Avatar>
+                      );
+                    })}
+                    {assignees.length > 3 && (
+                      <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                        <span className="text-[9px] font-semibold text-muted-foreground">
+                          +{assignees.length - 3}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                    <UserPlus className="h-3 w-3" />
+                    Assign
                   </span>
                 )}
-              </div>
-            )}
+              </AssigneeEditor>
+
+              {task.id && (
+                <span className="text-[10px] text-muted-foreground font-mono">
+                  #{task.id.slice(-4)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -591,48 +637,13 @@ function InlineTaskCreate({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [taskName, setTaskName] = useState("");
-  const [projectId, setProjectId] = useState("");
-  const [assigneeId, setAssigneeId] = useState("");
+  const [priority, setPriority] = useState<string>("MEDIUM");
+  const [dueDate, setDueDate] = useState("");
+  const [assigneeIds, setAssigneeIds] = useState<string[]>([]);
   const { mutate: createTask, isPending } = useCreateTask();
 
-  const handleSubmit = () => {
-    if (!taskName.trim() || !projectId) return;
-
-    const payload: any = {
-      task_name: taskName.trim(),
-      status,
-      priority: TaskPriority.MEDIUM,
-      dueDate: new Date(
-        Date.now() + 7 * 24 * 60 * 60 * 1000
-      ).toISOString(),
-      projectId,
-      assignments: assigneeId
-        ? [{ userId: assigneeId, assignedAt: new Date().toISOString() }]
-        : [],
-    };
-
-    createTask(payload, {
-      onSuccess: () => {
-        setTaskName("");
-        setProjectId("");
-        setAssigneeId("");
-        setIsOpen(false);
-      },
-    });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-    if (e.key === "Escape") {
-      setIsOpen(false);
-      setTaskName("");
-      setProjectId("");
-      setAssigneeId("");
-    }
-  };
+  // Auto-select first project
+  const autoProjectId = projects?.[0]?.id || "";
 
   // Deduplicate members by userId
   const uniqueMembers = members
@@ -645,6 +656,52 @@ function InlineTaskCreate({
         });
       })()
     : [];
+
+  const toggleAssignee = (userId: string) => {
+    setAssigneeIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const resetForm = () => {
+    setTaskName("");
+    setPriority("MEDIUM");
+    setDueDate("");
+    setAssigneeIds([]);
+    setIsOpen(false);
+  };
+
+  const handleSubmit = () => {
+    if (!taskName.trim() || !autoProjectId) return;
+
+    const payload: any = {
+      task_name: taskName.trim(),
+      status,
+      priority,
+      dueDate: dueDate
+        ? new Date(dueDate).toISOString()
+        : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      projectId: autoProjectId,
+      assignments: assigneeIds.map((id) => ({
+        userId: id,
+        assignedAt: new Date().toISOString(),
+      })),
+    };
+
+    createTask(payload, { onSuccess: resetForm });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+    if (e.key === "Escape") {
+      resetForm();
+    }
+  };
 
   if (!isOpen) {
     return (
@@ -669,48 +726,69 @@ function InlineTaskCreate({
         className="w-full text-sm border border-border rounded-md px-2 py-1.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
       />
 
-      <Select onValueChange={setProjectId} value={projectId || undefined}>
-        <SelectTrigger className="h-8 text-xs">
-          <SelectValue placeholder="Select project" />
-        </SelectTrigger>
-        <SelectContent position="popper" className="z-[100]">
-          {projects && projects.length > 0 ? (
-            projects.map((p) => (
-              <SelectItem key={p.id} value={p.id}>
-                {p.name}
+      <div className="flex items-center gap-1.5">
+        <Select onValueChange={setPriority} value={priority}>
+          <SelectTrigger className="h-7 text-[11px] flex-1">
+            <SelectValue placeholder="Priority" />
+          </SelectTrigger>
+          <SelectContent position="popper" className="z-[100]">
+            {["LOW", "MEDIUM", "HIGH", "CRITICAL"].map((p) => (
+              <SelectItem key={p} value={p} className="text-xs">
+                {p.charAt(0) + p.slice(1).toLowerCase()}
               </SelectItem>
-            ))
-          ) : (
-            <div className="px-2 py-1.5 text-xs text-muted-foreground">
-              No projects available
-            </div>
-          )}
-        </SelectContent>
-      </Select>
+            ))}
+          </SelectContent>
+        </Select>
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="h-7 flex-1 text-[11px] border border-border rounded-md px-1.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary/40"
+        />
+      </div>
 
-      <Select onValueChange={setAssigneeId} value={assigneeId || undefined}>
-        <SelectTrigger className="h-8 text-xs">
-          <SelectValue placeholder="Assignee (optional)" />
-        </SelectTrigger>
-        <SelectContent position="popper" className="z-[100]">
-          {uniqueMembers.length > 0 ? (
-            uniqueMembers.map((m) => (
-              <SelectItem key={m.userId} value={m.userId}>
-                {m.user?.full_name}
-              </SelectItem>
-            ))
-          ) : (
-            <div className="px-2 py-1.5 text-xs text-muted-foreground">
-              No members available
-            </div>
-          )}
-        </SelectContent>
-      </Select>
+      <div className="border border-border rounded-md max-h-28 overflow-y-auto">
+        {uniqueMembers.length > 0 ? (
+          uniqueMembers.map((m) => {
+            const isSelected = assigneeIds.includes(m.userId);
+            return (
+              <button
+                type="button"
+                key={m.userId}
+                onClick={() => toggleAssignee(m.userId)}
+                className={`w-full flex items-center gap-2 px-2 py-1.5 text-left text-xs transition-colors ${
+                  isSelected ? "bg-primary/10" : "hover:bg-muted"
+                }`}
+              >
+                <div className="flex-shrink-0 h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-medium overflow-hidden">
+                  {m.user?.avatarUrl ? (
+                    <img
+                      src={m.user.avatarUrl}
+                      alt={m.user.full_name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    m.user?.full_name?.charAt(0)?.toUpperCase() || "?"
+                  )}
+                </div>
+                <span className="flex-1 truncate">{m.user?.full_name}</span>
+                {isSelected && (
+                  <Check className="h-3 w-3 text-primary flex-shrink-0" />
+                )}
+              </button>
+            );
+          })
+        ) : (
+          <div className="px-2 py-1.5 text-xs text-muted-foreground text-center">
+            No members available
+          </div>
+        )}
+      </div>
 
       <div className="flex items-center gap-1.5">
         <button
           onClick={handleSubmit}
-          disabled={!taskName.trim() || !projectId || isPending}
+          disabled={!taskName.trim() || !autoProjectId || isPending}
           className="flex-1 flex items-center justify-center gap-1 text-xs font-medium px-2 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isPending ? (
@@ -721,10 +799,7 @@ function InlineTaskCreate({
         </button>
         <button
           onClick={() => {
-            setIsOpen(false);
-            setTaskName("");
-            setProjectId("");
-            setAssigneeId("");
+            resetForm();
           }}
           className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
         >
