@@ -357,10 +357,13 @@ function TaskCard({
 }) {
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(task.task_name);
+  const [statusOpen, setStatusOpen] = useState(false);
   const [priorityOpen, setPriorityOpen] = useState(false);
   const [dueDateOpen, setDueDateOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteTask = useDeleteTask();
+
+  const currentStatus = STATUS_CONFIG.find((s) => s.key === task.status) || STATUS_CONFIG[0];
 
   const handleSave = () => {
     if (newName.trim() && newName !== task.task_name) {
@@ -378,6 +381,11 @@ function TaskCard({
       setNewName(task.task_name);
       setEditing(false);
     }
+  };
+
+  const handleStatusChange = (newStatus: string) => {
+    updateTask({ id: task.id, payload: { status: newStatus } });
+    setStatusOpen(false);
   };
 
   const handlePriorityChange = (newPriority: string) => {
@@ -571,7 +579,8 @@ function TaskCard({
             </div>
 
             {/* Footer: assignees */}
-            <div className="flex items-center justify-between ml-6 pt-1 border-t border-border/50">
+            <div className="flex items-center justify-between gap-2 ml-6 pt-1 border-t border-border/50">
+              <div className="min-w-0">
               <AssigneeEditor
                 taskId={task.id}
                 assignments={rawAssignees}
@@ -610,12 +619,41 @@ function TaskCard({
                   </span>
                 )}
               </AssigneeEditor>
+              </div>
 
-              {task.id && (
-                <span className="text-[10px] text-muted-foreground font-mono">
-                  #{task.id.slice(-4)}
-                </span>
-              )}
+              <Popover open={statusOpen} onOpenChange={setStatusOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    className="shrink-0 whitespace-nowrap inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all bg-muted text-muted-foreground"
+                    title="Change status"
+                  >
+                    {React.createElement(currentStatus.icon, {
+                      className: `h-3 w-3 shrink-0 ${currentStatus.color}`,
+                    })}
+                    {currentStatus.label}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-40 p-1"
+                  align="end"
+                  sideOffset={4}
+                >
+                  {STATUS_CONFIG.map((s) => (
+                    <button
+                      key={s.key}
+                      onClick={() => handleStatusChange(s.key)}
+                      className={`w-full flex items-center gap-2 text-xs px-2 py-1.5 rounded hover:bg-muted transition-colors ${
+                        task.status === s.key ? "bg-muted font-semibold" : ""
+                      }`}
+                    >
+                      {React.createElement(s.icon, {
+                        className: `h-3.5 w-3.5 ${s.color}`,
+                      })}
+                      <span>{s.label}</span>
+                    </button>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import useIsCollapsed from "@/components/sidebar/use-is-collapsed";
 // import { useEffect } from "react";
 // import Loader from "../Loader";
 import Header from "./header/page";
+import AIChatWidget from "@/components/ai/ai-chat-widget";
 
 export default function RootLayout({
   children,
@@ -60,6 +61,7 @@ export default function RootLayout({
         <Header />
         {children}
       </main>
+      <AIChatWidget />
     </div>
   );
 }
