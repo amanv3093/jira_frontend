@@ -25,8 +25,16 @@ export const metadata: Metadata = {
     default: "Jira",
     template: "%s | Jira",
   },
-  description: "Jira - Project Management",
+  description: "A task management system built using React to track and manage workflow.",
   icons: { icon: "/logo.png" },
+  openGraph: {
+    title: "Jira Project – Task Management App",
+    description:
+      "A task management system built using React to track and manage workflow.",
+    url: "https://jira-frontend-amber.vercel.app/",
+    images: [{ url: "https://jira-frontend-amber.vercel.app/logo.png" }],
+    type: "website",
+  },
 };
 
 export default function RootLayout({
