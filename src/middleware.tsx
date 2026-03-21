@@ -72,5 +72,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  // 4️⃣ First-time user: redirect to /get-started if no workspaces
+  if (token && pathname === "/") {
+    const accessToken = (token.user as any)?.token;
+    if (accessToken) {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/workspace`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+        const data = await res.json();
+        if (Array.isArray(data?.data) && data.data.length === 0) {
+          return NextResponse.redirect(
+            new URL("/get-started", request.url)
+          );
+        }
+      } catch {
+        // If API call fails, let the root page handle it
+      }
+    }
+  }
+
   return NextResponse.next();
 }
